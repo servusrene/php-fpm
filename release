@@ -14,12 +14,11 @@ git push --follow-tags --set-upstream origin "$BRANCH"
 # Build the Docker image with latest code
 docker build \
     -f ./Dockerfile \
-    -t "$HOST/$IMAGE:$VERSION" \
-    -t $HOST/$IMAGE:latest . || 1;
+    -t "$HOST/$IMAGE:$VERSION" . || 1;
 
 docker build \
     -f ./development/Dockerfile \
-    -t "$HOST/$IMAGE-dev:$VERSION" || 1;
+    -t "$HOST/$IMAGE-dev:$VERSION" . || 1;
 
 docker build \
     -f ./production/Dockerfile \
