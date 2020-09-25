@@ -44,9 +44,3 @@ RUN docker-php-ext-install \
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# set php ini and apache config
-RUN rm /usr/local/etc/php/php.ini-development \
-    && rm /usr/local/etc/php/php.ini-production
-
-COPY php.ini /usr/local/etc/php/php.ini

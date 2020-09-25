@@ -10,3 +10,9 @@ COPY .bashrc /root/.bashrc
 
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
+
+# set php ini and apache config
+RUN rm /usr/local/etc/php/php.ini-development \
+    && rm /usr/local/etc/php/php.ini-production
+
+COPY php.ini /usr/local/etc/php/php.ini
