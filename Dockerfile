@@ -1,4 +1,4 @@
-FROM php:7.4-fpm AS cs-php-fpm
+FROM php:7.4-fpm
 
 LABEL maintainer="Alexander S., René"
 LABEL DOCKER_IMAGE_VERSION="1.1"

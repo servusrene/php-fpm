@@ -1,5 +1,5 @@
 ## Start Production Setup
-FROM cs-php-fpm AS cs-php-fpm-prod
+FROM repo-clicksports.clicksports.de/docker/php-fpm:latest
 
 ENV APP_ENV production
 
