@@ -16,3 +16,5 @@ RUN rm /usr/local/etc/php/php.ini-development \
     && rm /usr/local/etc/php/php.ini-production
 
 COPY php.ini /usr/local/etc/php/php.ini
+
+USER www-data
