@@ -3,7 +3,7 @@ ARG PHP_VERSION=7.4
 FROM php:${PHP_VERSION}-fpm 
 
 LABEL maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
-LABEL DOCKER_IMAGE_VERSION="1.1"
+LABEL DOCKER_IMAGE_VERSION="1.2"
 
 # install non php modules
 RUN apt-get update \
@@ -29,7 +29,11 @@ RUN apt-get update \
 RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 
 # Configure GD
-RUN docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/
+RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0") ; then \
+    docker-php-ext-configure gd --with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/  \
+  ; else \
+    docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ \
+  ; fi
 
 # install php modules
 RUN docker-php-ext-install \
