@@ -7,6 +7,7 @@ RUN apt-get update \
         nano
 
 COPY .bashrc /root/.bashrc
+COPY .bashrc /var/www/.bashrc
 
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
