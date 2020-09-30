@@ -1,4 +1,6 @@
-FROM php:7.4-fpm
+ARG PHP_VERSION=7.4
+
+FROM php:${PHP_VERSION}-fpm 
 
 LABEL maintainer="Alexander S., René"
 LABEL DOCKER_IMAGE_VERSION="1.1"
