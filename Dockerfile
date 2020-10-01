@@ -5,6 +5,9 @@ FROM php:${PHP_VERSION}-fpm
 LABEL maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
 LABEL DOCKER_IMAGE_VERSION="1.2"
 
+# set workdir
+WORKDIR /var/www/html
+
 # add bash scripts
 COPY docker-php-ext-get /usr/local/bin/
 
@@ -53,5 +56,3 @@ RUN docker-php-ext-install \
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-WORKDIR /var/www/html
