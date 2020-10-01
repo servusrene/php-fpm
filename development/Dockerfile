@@ -11,8 +11,17 @@ RUN apt-get update \
 COPY .bashrc /root/.bashrc
 COPY .bashrc /var/www/.bashrc
 
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
+# extract php source
+RUN docker-php-source extract
+
+# get php ext sources
+RUN docker-php-ext-get xdebug 2.9.8
+
+# install php modules
+RUN docker-php-ext-install xdebug
+
+# delete php source
+RUN docker-php-source delete
 
 # set php ini and apache config
 RUN rm /usr/local/etc/php/php.ini-development \
