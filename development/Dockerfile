@@ -11,7 +11,7 @@ RUN apt-get update \
 
 # copy bash layout
 COPY .bashrc /root/.bashrc
-COPY .bashrc /var/www/.bashrc
+COPY --chown=www-data:www-data .bashrc /var/www/.bashrc
 
 # extract php source
 RUN docker-php-source extract
