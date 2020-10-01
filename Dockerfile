@@ -5,6 +5,9 @@ FROM php:${PHP_VERSION}-fpm
 LABEL maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
 LABEL DOCKER_IMAGE_VERSION="1.2"
 
+# add bash scripts
+COPY docker-php-ext-get /usr/local/bin/
+
 # install non php modules
 RUN apt-get update \
     && apt-get install -y \
