@@ -6,8 +6,10 @@ ENV APP_ENV development
 
 RUN apt-get update \
     && apt-get install -y \
-        nano
+        nano \
+    && rm -rf /var/lib/apt/lists/*
 
+# copy bash layout
 COPY .bashrc /root/.bashrc
 COPY .bashrc /var/www/.bashrc
 
