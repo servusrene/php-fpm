@@ -31,14 +31,8 @@ RUN rm /usr/local/etc/php/php.ini-development \
 
 COPY php.ini /usr/local/etc/php/php.ini
 
-# copy the start script
-COPY docker/app/docker-entrypoint.sh /docker-entrypoint.sh
-
-# chmod the start script
-RUN chmod +x /docker-entrypoint.sh
-
-# add www-data to sudoers
-RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN mkdir /var/www/.composer
+RUN chown www-data:www-data /var/www/.composer
 
 USER www-data
 
