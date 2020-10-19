@@ -1,9 +1,15 @@
 ARG PHP_VERSION=7.4
 
-FROM php:${PHP_VERSION}-fpm 
+FROM php:${PHP_VERSION}-fpm
 
 LABEL maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
 LABEL DOCKER_IMAGE_VERSION="1.2"
+
+# set workdir
+WORKDIR /var/www/html
+
+# add bash scripts
+COPY docker-php-ext-get /usr/local/bin/
 
 # install non php modules
 RUN apt-get update \
@@ -11,6 +17,7 @@ RUN apt-get update \
         libfreetype6-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
+        libmagickwand-dev \
         libssl-dev \
         libzip-dev \
         libxml2-dev \
@@ -35,6 +42,12 @@ RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0") ; then \
     docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ \
   ; fi
 
+# extract php source
+RUN docker-php-source extract
+
+# get php ext sources
+RUN docker-php-ext-get imagick 3.4.4
+
 # install php modules
 RUN docker-php-ext-install \
     imap \
@@ -46,6 +59,10 @@ RUN docker-php-ext-install \
     xml \
     mysqli \
     curl \
-    calendar
+    calendar \
+    imagick
+
+# delete php source
+RUN docker-php-source delete
 
 WORKDIR /var/www/html

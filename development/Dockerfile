@@ -6,13 +6,24 @@ ENV APP_ENV development
 
 RUN apt-get update \
     && apt-get install -y \
-        nano
+        nano \
+    && rm -rf /var/lib/apt/lists/*
 
+# copy bash layout
 COPY .bashrc /root/.bashrc
-COPY .bashrc /var/www/.bashrc
+COPY --chown=www-data:www-data .bashrc /var/www/.bashrc
 
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
+# extract php source
+RUN docker-php-source extract
+
+# get php ext sources
+RUN docker-php-ext-get xdebug 2.9.8
+
+# install php modules
+RUN docker-php-ext-install xdebug
+
+# delete php source
+RUN docker-php-source delete
 
 # set php ini and apache config
 RUN rm /usr/local/etc/php/php.ini-development \
