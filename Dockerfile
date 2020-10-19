@@ -65,7 +65,6 @@ RUN docker-php-ext-install \
 # delete php source
 RUN docker-php-source delete
 
-RUN mkdir /var/www/.composer
-RUN chown www-data:www-data /var/www/.composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
