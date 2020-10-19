@@ -43,4 +43,4 @@ RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER www-data
 
 # install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --filename=composer
