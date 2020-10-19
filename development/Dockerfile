@@ -42,8 +42,5 @@ RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER www-data
 
-# set the entrypoint
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-EXPOSE 9000
-CMD ["php-fpm"]
+# install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

@@ -65,5 +65,4 @@ RUN docker-php-ext-install \
 # delete php source
 RUN docker-php-source delete
 
-# install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+WORKDIR /var/www/html
