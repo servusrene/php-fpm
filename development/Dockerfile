@@ -31,6 +31,9 @@ RUN rm /usr/local/etc/php/php.ini-development \
 
 COPY php.ini /usr/local/etc/php/php.ini
 
+RUN mkdir /var/www/.composer
+RUN chown www-data:www-data /var/www/.composer
+
 USER www-data
 
 # install composer
