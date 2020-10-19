@@ -31,4 +31,6 @@ RUN rm /usr/local/etc/php/php.ini-development \
 
 COPY php.ini /usr/local/etc/php/php.ini
 
+RUN chown www-data:www-data -R /var/www
+
 USER www-data
