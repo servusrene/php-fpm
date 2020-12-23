@@ -161,7 +161,7 @@ pipelines:
       - parallel:
           - step:
               name: Deploy 7.3
-              deployment: Production
+              deployment: Production-73
               script:
                 - IMAGE_NAME=$BITBUCKET_REPO_SLUG
                 - VERSION=7.3
@@ -185,7 +185,7 @@ pipelines:
                 - docker
           - step:
               name: Deploy 7.4
-              deployment: Production
+              deployment: Production-74
               script:
                 - IMAGE_NAME=$BITBUCKET_REPO_SLUG
                 - VERSION=7.4
@@ -209,7 +209,7 @@ pipelines:
                 - docker
           - step:
               name: Deploy 8.0
-              deployment: Production
+              deployment: Production-80
               script:
                 - IMAGE_NAME=$BITBUCKET_REPO_SLUG
                 - VERSION=8.0
