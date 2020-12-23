@@ -158,17 +158,82 @@ pipelines:
                 - docker
               artifacts:
                 - "*.tar"
-      - step:
-          name: Deploy 7.3
-          deployment: Production
-          script:
-            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-            - VERSION=7.3
-            - SUFIX=
-            - IMAGE=${DOCKER_REPOSITORY}/${IMAGE_NAME}${SUFFIX}
-            - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
-            - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
-            - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
-            - docker push "${IMAGE}:${VERSION}"
-          services:
-            - docker
+      - parallel:
+          - step:
+              name: Deploy 7.3
+              deployment: Production
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.3
+                - SUFIX=
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+                - SUFIX=-dev
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+                - SUFIX=-prod
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+              services:
+                - docker
+          - step:
+              name: Deploy 7.4
+              deployment: Production
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.4
+                - SUFIX=
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+                - SUFIX=-dev
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+                - SUFIX=-prod
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+              services:
+                - docker
+          - step:
+              name: Deploy 8.0
+              deployment: Production
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=8.0
+                - SUFIX=
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+                - SUFIX=-dev
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+                - SUFIX=-prod
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}${SUFFIX}
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+                - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}:${VERSION}"
+              services:
+                - docker
