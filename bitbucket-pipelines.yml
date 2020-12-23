@@ -7,7 +7,9 @@ pipelines:
             name: Build and Test
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - docker build . --file Dockerfile --tag ${IMAGE_NAME}
+              - VERSION=7.3
+              - FODLER=./
+              - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}:${VERSION}"
             services:
               - docker
             caches:
@@ -19,30 +21,109 @@ pipelines:
               - hadolint Dockerfile
   branches:
     master:
+      - parallel:
+        - step:
+            name: Build 7.3 default
+            script:
+              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+              - VERSION=7.3
+              - FODLER=./
+              - SUFFIX=
+              - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
+              - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+            services:
+              - docker
+            caches:
+              - docker
+            artifacts:
+              - "*.tar"
+        - step:
+            name: Build 7.4 default
+            script:
+              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+              - VERSION=7.4
+              - FODLER=./
+              - SUFFIX=
+              - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
+              - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+            services:
+              - docker
+            caches:
+              - docker
+            artifacts:
+              - "*.tar"
+      - parallel:
+          - step:
+              name: Build 7.3 Dev
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.3
+                - FODLER=./devlopment
+                - SUFFIX=dev
+                - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
+                - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+              services:
+                - docker
+              caches:
+                - docker
+              artifacts:
+                - "*.tar"
+          - step:
+              name: Build 7.4 Dev
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.4
+                - FODLER=./development
+                - SUFFIX=dev
+                - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
+                - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+              services:
+                - docker
+              caches:
+                - docker
+              artifacts:
+                - "*.tar"
+          - step:
+              name: Build 7.3 Prod
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.3
+                - FODLER=./production
+                - SUFFIX=prod
+                - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
+                - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+              services:
+                - docker
+              caches:
+                - docker
+              artifacts:
+                - "*.tar"
+          - step:
+              name: Build 7.4 Prod
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.4
+                - FODLER=./production
+                - SUFFIX=prod
+                - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
+                - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+              services:
+                - docker
+              caches:
+                - docker
+              artifacts:
+                - "*.tar"
       - step:
-          name: Release
-          script:
-            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-            - docker build . --file Dockerfile --tag ${IMAGE_NAME}
-            - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}.tar"
-          services:
-            - docker
-          caches:
-            - docker
-          artifacts:
-            - "*.tar"
-      - step:
-          name: Deploy to Production
+          name: Deploy 7.3
           deployment: Production
           script:
+            - IMAGE_NAME=BITBUCKET_REPO_SLUG
+            - VERSION=7.3
+            - SUFIX=
             - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
-            - IMAGE_NAME=${BITBUCKET_REPO_SLUG}
-            - docker load --input "${IMAGE_NAME}.tar"
-            - IMAGE=${DOCKER_REPOSITORY}/${IMAGE_NAME}
-            - VERSION="prod-0.1.${BITBUCKET_BUILD_NUMBER}"
+            - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+            - IMAGE=${DOCKER_REPOSITORY}/${IMAGE_NAME}${SUFFIX}
             - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
-            - docker tag "${IMAGE_NAME}" "${IMAGE}:latest"
             - docker push "${IMAGE}:${VERSION}"
-            - docker push "${IMAGE}:latest"
           services:
             - docker
