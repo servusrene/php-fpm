@@ -59,7 +59,7 @@ pipelines:
                 - IMAGE_NAME=$BITBUCKET_REPO_SLUG
                 - VERSION=7.3
                 - FODLER=./devlopment
-                - SUFFIX=dev
+                - SUFFIX=-dev
                 - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
                 - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
               services:
@@ -74,7 +74,7 @@ pipelines:
                 - IMAGE_NAME=$BITBUCKET_REPO_SLUG
                 - VERSION=7.4
                 - FODLER=./development
-                - SUFFIX=dev
+                - SUFFIX=-dev
                 - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
                 - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
               services:
@@ -89,7 +89,7 @@ pipelines:
                 - IMAGE_NAME=$BITBUCKET_REPO_SLUG
                 - VERSION=7.3
                 - FODLER=./production
-                - SUFFIX=prod
+                - SUFFIX=-prod
                 - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
                 - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
               services:
@@ -104,7 +104,7 @@ pipelines:
                 - IMAGE_NAME=$BITBUCKET_REPO_SLUG
                 - VERSION=7.4
                 - FODLER=./production
-                - SUFFIX=prod
+                - SUFFIX=-prod
                 - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
                 - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
               services:
@@ -120,9 +120,9 @@ pipelines:
             - IMAGE_NAME=BITBUCKET_REPO_SLUG
             - VERSION=7.3
             - SUFIX=
+            - IMAGE=${DOCKER_REPOSITORY}/${IMAGE_NAME}${SUFFIX}
             - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
             - docker load --input "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
-            - IMAGE=${DOCKER_REPOSITORY}/${IMAGE_NAME}${SUFFIX}
             - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
             - docker push "${IMAGE}:${VERSION}"
           services:
