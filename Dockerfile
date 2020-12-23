@@ -42,8 +42,6 @@ RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0") ; then \
     docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ \
   ; fi
 
-# extract php source
-RUN docker-php-source extract
 
 # install php modules
 RUN docker-php-ext-install \
@@ -63,6 +61,7 @@ RUN docker-php-ext-install \
 # see https://github.com/Imagick/imagick/issues/358
 # waiting release for PECL package
 RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0") ; then \
+    docker-php-source extract &&
     docker-php-ext-get imagick 3.4.4 && \
     docker-php-ext-install imagick \
   ; fi
