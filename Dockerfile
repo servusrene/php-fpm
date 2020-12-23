@@ -46,7 +46,13 @@ RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0") ; then \
 RUN docker-php-source extract
 
 # get php ext sources
-RUN docker-php-ext-get imagick 3.4.4
+# imagegick not working atm with php8
+# see https://github.com/Imagick/imagick/issues/358
+# waiting release for PECL package
+RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0") ; then \
+    docker-php-ext-get imagick 3.4.4 && \
+    docker-php-ext-install imagick
+  ; fi
 
 # install php modules
 RUN docker-php-ext-install \
@@ -59,8 +65,7 @@ RUN docker-php-ext-install \
     xml \
     mysqli \
     curl \
-    calendar \
-    imagick
+    calendar
 
 # delete php source
 RUN docker-php-source delete
