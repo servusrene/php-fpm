@@ -36,7 +36,7 @@ pipelines:
             caches:
               - docker
             artifacts:
-              - "*.tar"
+              - "${SUFFIX}-${VERSION}.tar"
         - step:
             name: Build 7.4 default
             script:
@@ -51,7 +51,7 @@ pipelines:
             caches:
               - docker
             artifacts:
-              - "*.tar"
+              - "${SUFFIX}-${VERSION}.tar"
         - step:
             name: Build 8.0 default
             script:
@@ -66,7 +66,7 @@ pipelines:
             caches:
               - docker
             artifacts:
-              - "*.tar"
+              - "${SUFFIX}-${VERSION}.tar"
       - parallel:
           - step:
               name: Build 7.3 Dev
@@ -82,7 +82,7 @@ pipelines:
               caches:
                 - docker
               artifacts:
-                - "*.tar"
+                - "${SUFFIX}-${VERSION}.tar"
           - step:
               name: Build 7.4 Dev
               script:
@@ -97,7 +97,7 @@ pipelines:
               caches:
                 - docker
               artifacts:
-                - "*.tar"
+                - "${SUFFIX}-${VERSION}.tar"
           - step:
               name: Build 8.0 Dev
               script:
@@ -112,7 +112,7 @@ pipelines:
               caches:
                 - docker
               artifacts:
-                - "*.tar"
+                - "${SUFFIX}-${VERSION}.tar"
           - step:
               name: Build 7.3 Prod
               script:
@@ -127,7 +127,7 @@ pipelines:
               caches:
                 - docker
               artifacts:
-                - "*.tar"
+                - "${SUFFIX}-${VERSION}.tar"
           - step:
               name: Build 7.4 Prod
               script:
@@ -142,7 +142,7 @@ pipelines:
               caches:
                 - docker
               artifacts:
-                - "*.tar"
+                - "${SUFFIX}-${VERSION}.tar"
           - step:
               name: Build 8.0 Prod
               script:
@@ -157,7 +157,7 @@ pipelines:
               caches:
                 - docker
               artifacts:
-                - "*.tar"
+                - "${SUFFIX}-${VERSION}.tar"
       - parallel:
           - step:
               name: Deploy 7.3
