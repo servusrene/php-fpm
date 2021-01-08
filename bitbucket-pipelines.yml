@@ -28,12 +28,9 @@ pipelines:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.3
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --file "./Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}:${VERSION}"
-              - docker tag "${IMAGE_NAME}:${VERSION}" "${IMAGE}:${VERSION}"
-              - docker build . --file "./development/Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}-dev:${VERSION}"
-              - docker tag "${IMAGE_NAME}-dev:${VERSION}" "${IMAGE}-dev:${VERSION}"
-              - docker build . --file "./production/Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}-prod:${VERSION}"
-              - docker tag "${IMAGE_NAME}-prod:${VERSION}" "${IMAGE}-prod:${VERSION}"
+              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
