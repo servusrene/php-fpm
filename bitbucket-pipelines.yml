@@ -23,7 +23,7 @@ pipelines:
     master:
       - parallel:
         - step:
-            name: Build 7.3 default
+            name: PHP 7.3
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.3
@@ -40,27 +40,35 @@ pipelines:
             caches:
               - docker
         - step:
-            name: Build 7.4 default
+            name: PHP 7.4
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.4
-              - FODLER=./
-              - SUFFIX=
-              - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
-              - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+              - docker push "${IMAGE}:${VERSION}"
+              - docker push "${IMAGE}-dev:${VERSION}"
+              - docker push "${IMAGE}-prod:${VERSION}"
             services:
               - docker
             caches:
               - docker
         - step:
-            name: Build 8.0 default
+            name: PHP 8.0
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=8.0
-              - FODLER=./
-              - SUFFIX=
-              - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}${SUFFIX}:${VERSION}"
-              - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}${SUFFIX}-${VERSION}.tar"
+              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+              - docker push "${IMAGE}:${VERSION}"
+              - docker push "${IMAGE}-dev:${VERSION}"
+              - docker push "${IMAGE}-prod:${VERSION}"
             services:
               - docker
             caches:
