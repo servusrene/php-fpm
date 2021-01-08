@@ -17,7 +17,7 @@ COPY --chown=www-data:www-data .bashrc /var/www/.bashrc
 RUN docker-php-source extract
 
 # get php ext sources
-RUN docker-php-ext-get xdebug 2.9.8
+RUN docker-php-ext-get xdebug 3.0.2
 
 # install php modules
 RUN docker-php-ext-install xdebug
