@@ -42,11 +42,6 @@ RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0") ; then \
     docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ \
   ; fi
 
-# extract php source
-RUN docker-php-source extract
-
-# get php ext sources
-RUN docker-php-ext-get imagick 3.4.4
 
 # install php modules
 RUN docker-php-ext-install \
@@ -59,11 +54,21 @@ RUN docker-php-ext-install \
     xml \
     mysqli \
     curl \
-    calendar \
-    imagick
+    calendar
+
+# get php ext sources
+# imagegick not working atm with php8
+# see https://github.com/Imagick/imagick/issues/358
+# waiting release for PECL package
+RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0") ; then \
+    docker-php-source extract && \
+    docker-php-ext-get imagick 3.4.4 && \
+    docker-php-ext-install imagick \
+  ; fi
 
 # delete php source
 RUN docker-php-source delete
 
-# install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+WORKDIR /var/www/html
