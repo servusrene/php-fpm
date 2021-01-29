@@ -32,10 +32,10 @@ RUN rm /usr/local/etc/php/php.ini-development \
 COPY php.ini /usr/local/etc/php/php.ini
 
 # copy the start script
-COPY docker/app/docker-entrypoint.sh /docker-entrypoint.sh
+COPY docker/app/docker-entrypoint.fpm.sh /docker-entrypoint.fpm.sh
 
 # chmod the start script
-RUN chmod +x /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.fpm.sh
 
 # add www-data to sudoers
 RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -43,7 +43,7 @@ RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER www-data
 
 # set the entrypoint
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.fpm.sh"]
 
 EXPOSE 9000
 CMD ["php-fpm"]
