@@ -72,7 +72,7 @@ RUN if [[ "$PHP_VERSION" =~ ^8\.0 ]]; then \
 # delete php source
 RUN docker-php-source delete
 
-FROM composer:2.0 as composer
+FROM composer:2.0
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
