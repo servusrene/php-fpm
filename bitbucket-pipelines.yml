@@ -18,7 +18,7 @@ pipelines:
             name: Lint the Dockerfile
             image: hadolint/hadolint:latest-debian
             script:
-              - hadolint --ignore DL3008 --ignore DL3023 Dockerfile
+              - hadolint --ignore DL3008 --ignore DL3022 Dockerfile
   branches:
     master:
       - parallel:
