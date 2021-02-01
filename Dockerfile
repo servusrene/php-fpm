@@ -9,7 +9,7 @@ LABEL DOCKER_IMAGE_VERSION="1.2"
 WORKDIR /var/www/html
 
 #set SHELL
-SHELL ["/bin/bash", "-o"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # add bash scripts
 COPY docker-php-ext-get /usr/local/bin/
