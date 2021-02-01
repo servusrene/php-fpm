@@ -5,7 +5,7 @@ FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 ENV APP_ENV development
 
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install --no-install-recommends -y \
         nano \
     && rm -rf /var/lib/apt/lists/*
 
