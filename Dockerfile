@@ -69,6 +69,7 @@ RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0") ; then \
 # delete php source
 RUN docker-php-source delete
 
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+FROM composer:latest as composer
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
