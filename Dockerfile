@@ -8,11 +8,11 @@ LABEL DOCKER_IMAGE_VERSION="1.2"
 # set workdir
 WORKDIR /var/www/html
 
+#set SHELL
+SHELL ["/bin/bash", "-o"]
+
 # add bash scripts
 COPY docker-php-ext-get /usr/local/bin/
-
-#set pipefail
-RUN set -o
 
 # install non php modules
 RUN apt-get update \
