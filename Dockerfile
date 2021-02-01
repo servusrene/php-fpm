@@ -11,6 +11,9 @@ WORKDIR /var/www/html
 # add bash scripts
 COPY docker-php-ext-get /usr/local/bin/
 
+#set pipefail
+RUN set -o
+
 # install non php modules
 RUN apt-get update \
     && apt-get install -y \
