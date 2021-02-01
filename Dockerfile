@@ -36,7 +36,7 @@ RUN apt-get update \
 RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 
 # Configure GD
-RUN if "$PHP_VERSION" | grep -Eq '^7\.4'; then \
+RUN if echo "$PHP_VERSION" | grep -Eq '^7\.4'; then \
     docker-php-ext-configure gd --with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/  \
   ; else \
     docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ \
@@ -60,7 +60,7 @@ RUN docker-php-ext-install \
 # imagegick not working atm with php8
 # see https://github.com/Imagick/imagick/issues/358
 # waiting release for PECL package
-RUN if "$PHP_VERSION" | grep -Eq '^8\.0'; then \
+RUN if echo "$PHP_VERSION" | grep -Eq '^8\.0'; then \
     docker-php-source extract && \
     docker-php-ext-get imagick 3.4.4 && \
     docker-php-ext-install imagick \
