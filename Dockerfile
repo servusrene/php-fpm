@@ -33,6 +33,7 @@ RUN apt-get update \
         zip \
         unzip \
         git \
+        --no-install-recommends
     && rm -rf /var/lib/apt/lists/*
 
 # Configure imap
