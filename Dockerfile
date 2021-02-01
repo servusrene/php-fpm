@@ -17,7 +17,6 @@ COPY docker-php-ext-get /usr/local/bin/
 # install non php modules
 RUN apt-get update \
     && apt-get install -y \
-        --no-install-recommends \
         libfreetype6-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
