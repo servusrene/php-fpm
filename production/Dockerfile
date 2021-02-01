@@ -4,11 +4,6 @@ FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 
 ENV APP_ENV production
 
-RUN apt-get update \
-    && apt-get install -y \
-        nano \
-    && rm -rf /var/lib/apt/lists/*
-
 # set php ini and apache config
 RUN rm /usr/local/etc/php/php.ini-development \
     && rm /usr/local/etc/php/php.ini-production
