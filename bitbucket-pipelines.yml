@@ -2,6 +2,12 @@ image: atlassian/default-image:2
 
 pipelines:
   default:
+    - step:
+        name: Lint the Dockerfile
+        image: hadolint/hadolint:latest-debian
+        script:
+          - hadolint --ignore DL3008 --ignore DL3022 Dockerfile
+          - hadolint --ignore DL3008 --ignore DL3022 **/Dockerfile
     - parallel:
         - step:
             name: Build and Test PHP 7.3
@@ -57,12 +63,6 @@ pipelines:
               - docker
             artifacts:
               - "*.tar.gz"
-        - step:
-            name: Lint the Dockerfile
-            image: hadolint/hadolint:latest-debian
-            script:
-              - hadolint --ignore DL3008 --ignore DL3022 Dockerfile
-              - hadolint --ignore DL3008 --ignore DL3022 **/Dockerfile
   branches:
     master:
       - parallel:
@@ -81,8 +81,6 @@ pipelines:
               - docker push "${IMAGE}-prod:${VERSION}"
             services:
               - docker
-            caches:
-              - docker
         - step:
             name: Deploy PHP 7.4
             script:
@@ -98,8 +96,6 @@ pipelines:
               - docker push "${IMAGE}-prod:${VERSION}"
             services:
               - docker
-            caches:
-              - docker
         - step:
             name: Deploy PHP 8.0
             script:
@@ -114,6 +110,4 @@ pipelines:
               - docker push "${IMAGE}-dev:${VERSION}"
               - docker push "${IMAGE}-prod:${VERSION}"
             services:
-              - docker
-            caches:
               - docker
