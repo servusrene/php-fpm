@@ -32,7 +32,7 @@ RUN rm /usr/local/etc/php/php.ini-development \
 COPY php.ini /usr/local/etc/php/php.ini
 
 # copy the start script
-COPY docker/app/docker-entrypoint.fpm.sh /docker-entrypoint.fpm.sh
+COPY docker-entrypoint.fpm.sh /docker-entrypoint.fpm.sh
 
 # chmod the start script
 RUN chmod +x /docker-entrypoint.fpm.sh
