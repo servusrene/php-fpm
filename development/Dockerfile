@@ -5,7 +5,7 @@ FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 ENV APP_ENV development
 
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install --no-install-recommends -y \
         nano \
     && rm -rf /var/lib/apt/lists/*
 
@@ -31,6 +31,19 @@ RUN rm /usr/local/etc/php/php.ini-development \
 
 COPY php.ini /usr/local/etc/php/php.ini
 
-RUN chown www-data:www-data -R /var/www
+# copy the start script
+COPY docker-entrypoint.fpm.sh /docker-entrypoint.fpm.sh
+
+# chmod the start script
+RUN chmod +x /docker-entrypoint.fpm.sh
+
+# add www-data to sudoers
+RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER www-data
+
+# set the entrypoint
+ENTRYPOINT ["/docker-entrypoint.fpm.sh"]
+
+EXPOSE 9000
+CMD ["php-fpm"]

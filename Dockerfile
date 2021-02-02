@@ -8,12 +8,15 @@ LABEL DOCKER_IMAGE_VERSION="1.2"
 # set workdir
 WORKDIR /var/www/html
 
+#set SHELL
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # add bash scripts
 COPY docker-php-ext-get /usr/local/bin/
 
 # install non php modules
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install --no-install-recommends -y \
         libfreetype6-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
@@ -36,7 +39,7 @@ RUN apt-get update \
 RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 
 # Configure GD
-RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0") ; then \
+RUN if dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0"; then \
     docker-php-ext-configure gd --with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/  \
   ; else \
     docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ \
@@ -60,7 +63,7 @@ RUN docker-php-ext-install \
 # imagegick not working atm with php8
 # see https://github.com/Imagick/imagick/issues/358
 # waiting release for PECL package
-RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0") ; then \
+RUN if dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0"; then \
     docker-php-source extract && \
     docker-php-ext-get imagick 3.4.4 && \
     docker-php-ext-install imagick \
@@ -69,6 +72,6 @@ RUN if $(dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0") ; then \
 # delete php source
 RUN docker-php-source delete
 
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
