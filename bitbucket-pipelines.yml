@@ -12,9 +12,9 @@ pipelines:
               - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
               - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
               - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE}-${VERSION}.tar.gz"
-              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE}-dev-${VERSION}.tar.gz"
-              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE}-prod-${VERSION}.tar.gz"
+              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE_NAME}-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE_NAME}-dev-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE_NAME}-prod-${VERSION}.tar.gz"
             services:
               - docker
             caches:
@@ -30,9 +30,9 @@ pipelines:
               - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
               - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
               - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE}-${VERSION}.tar.gz"
-              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE}-dev-${VERSION}.tar.gz"
-              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE}-prod-${VERSION}.tar.gz"
+              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE_NAME}-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE_NAME}-dev-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE_NAME}-prod-${VERSION}.tar.gz"
             services:
               - docker
             caches:
@@ -48,9 +48,9 @@ pipelines:
               - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
               - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
               - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE}-${VERSION}.tar.gz"
-              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE}-dev-${VERSION}.tar.gz"
-              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE}-prod-${VERSION}.tar.gz"
+              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE_NAME}-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE_NAME}-dev-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE_NAME}-prod-${VERSION}.tar.gz"
             services:
               - docker
             caches:
@@ -72,9 +72,9 @@ pipelines:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.3
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker load < "${IMAGE}:${VERSION}.tar.gz"
-              - docker load < "${IMAGE}-dev:${VERSION}.tar.gz"
-              - docker load < "${IMAGE}-prod:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}-dev:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}-prod:${VERSION}.tar.gz"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
@@ -89,9 +89,9 @@ pipelines:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.4
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker load < "${IMAGE}:${VERSION}.tar.gz"
-              - docker load < "${IMAGE}-dev:${VERSION}.tar.gz"
-              - docker load < "${IMAGE}-prod:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}-dev:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}-prod:${VERSION}.tar.gz"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
@@ -106,9 +106,9 @@ pipelines:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=8.0
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker load < "${IMAGE}:${VERSION}.tar.gz"
-              - docker load < "${IMAGE}-dev:${VERSION}.tar.gz"
-              - docker load < "${IMAGE}-prod:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}-dev:${VERSION}.tar.gz"
+              - docker load < "${IMAGE_NAME}-prod:${VERSION}.tar.gz"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
