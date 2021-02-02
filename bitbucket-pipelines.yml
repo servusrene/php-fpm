@@ -4,16 +4,59 @@ pipelines:
   default:
     - parallel:
         - step:
-            name: Build and Test
+            name: Build and Test PHP 7.3
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.3
-              - FODLER=./
-              - docker build . --file "${FOLDER}Dockerfile" --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE_NAME}:${VERSION}"
+              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE}-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE}-dev-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE}-prod-${VERSION}.tar.gz"
             services:
               - docker
             caches:
               - docker
+            artifacts:
+              - "*.tar.gz"
+        - step:
+            name: Build and Test PHP 7.4
+            script:
+              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+              - VERSION=7.4
+              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE}-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE}-dev-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE}-prod-${VERSION}.tar.gz"
+            services:
+              - docker
+            caches:
+              - docker
+            artifacts:
+              - "*.tar.gz"
+        - step:
+            name: Build and Test PHP 8.0
+            script:
+              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+              - VERSION=8.0
+              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - docker save ${IMAGE}:${VERSION} | gzip > "${IMAGE}-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-dev:${VERSION} | gzip > "${IMAGE}-dev-${VERSION}.tar.gz"
+              - docker save ${IMAGE}-prod:${VERSION} | gzip > "${IMAGE}-prod-${VERSION}.tar.gz"
+            services:
+              - docker
+            caches:
+              - docker
+            artifacts:
+              - "*.tar.gz"
         - step:
             name: Lint the Dockerfile
             image: hadolint/hadolint:latest-debian
@@ -24,14 +67,14 @@ pipelines:
     master:
       - parallel:
         - step:
-            name: PHP 7.3
+            name: Deploy PHP 7.3
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.3
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - docker load < "${IMAGE}:${VERSION}.tar.gz"
+              - docker load < "${IMAGE}-dev:${VERSION}.tar.gz"
+              - docker load < "${IMAGE}-prod:${VERSION}.tar.gz"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
@@ -41,14 +84,14 @@ pipelines:
             caches:
               - docker
         - step:
-            name: PHP 7.4
+            name: Deploy PHP 7.4
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=7.4
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - docker load < "${IMAGE}:${VERSION}.tar.gz"
+              - docker load < "${IMAGE}-dev:${VERSION}.tar.gz"
+              - docker load < "${IMAGE}-prod:${VERSION}.tar.gz"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
@@ -58,14 +101,14 @@ pipelines:
             caches:
               - docker
         - step:
-            name: PHP 8.0
+            name: Deploy PHP 8.0
             script:
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               - VERSION=8.0
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+              - docker load < "${IMAGE}:${VERSION}.tar.gz"
+              - docker load < "${IMAGE}-dev:${VERSION}.tar.gz"
+              - docker load < "${IMAGE}-prod:${VERSION}.tar.gz"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
