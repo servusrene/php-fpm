@@ -71,7 +71,7 @@ pipelines:
               - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
               - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
               - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}
+              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
               - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
               - docker push "${IMAGE}:${VERSION}"
               - docker push "${IMAGE}-dev:${VERSION}"
