@@ -7,6 +7,7 @@ ENV APP_ENV development
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         nano \
+        sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # copy bash layout
