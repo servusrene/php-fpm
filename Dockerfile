@@ -2,8 +2,8 @@ ARG PHP_VERSION=7.4
 
 FROM php:${PHP_VERSION}-fpm
 
-LABEL maintainer="Alexander S., René"
-LABEL DOCKER_IMAGE_VERSION="1.2"
+LABEL php-fpm.maintainer="Alexander S., René"
+LABEL php-fpm.version="1.2"
 
 # set workdir
 WORKDIR /var/www/html
