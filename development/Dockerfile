@@ -3,6 +3,9 @@ ARG PHP_VERSION=7.4
 FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 
 ENV APP_ENV development
+ENV XDEBUG_MODE debug
+ENV XDEBUG_CONFIG client_host=host.docker.internal
+ENV PHP_IDE_CONFIG serverName=docker
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -18,7 +21,7 @@ COPY --chown=www-data:www-data .bashrc /var/www/.bashrc
 RUN docker-php-source extract
 
 # get php ext sources
-RUN docker-php-ext-get xdebug 3.0.2
+RUN docker-php-ext-get xdebug 3.0.4
 
 # install php modules
 RUN docker-php-ext-install xdebug
