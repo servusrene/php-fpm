@@ -2,8 +2,8 @@ ARG PHP_VERSION=7.4
 
 FROM php:${PHP_VERSION}-fpm
 
-LABEL maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
-LABEL DOCKER_IMAGE_VERSION="1.2"
+LABEL clicksports.php-fpm.maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
+LABEL clicksports.php-fpm.version="1.2"
 
 # set workdir
 WORKDIR /var/www/html
