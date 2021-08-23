@@ -24,7 +24,7 @@ RUN docker-php-source extract
 RUN docker-php-ext-get xdebug 3.0.4
 
 # install php modules
-RUN docker-php-ext-install xdebug opcache
+RUN docker-php-ext-install xdebug
 
 # delete php source
 RUN docker-php-source delete
