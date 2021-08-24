@@ -57,7 +57,8 @@ RUN docker-php-ext-install \
     xml \
     mysqli \
     curl \
-    calendar
+    calendar \
+    opcache
 
 # get php ext sources
 # imagegick not working atm with php8
