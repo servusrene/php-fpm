@@ -3,7 +3,7 @@ ARG PHP_VERSION=7.4
 FROM php:${PHP_VERSION}-fpm
 
 LABEL clicksports.php-fpm.maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
-LABEL clicksports.php-fpm.version="1.2"
+LABEL clicksports.php-fpm.version="1.3"
 
 # set workdir
 WORKDIR /var/www/html
@@ -39,12 +39,7 @@ RUN apt-get update \
 RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 
 # Configure GD
-RUN if dpkg --compare-versions "$PHP_VERSION" "lt" "7.4.0"; then \
-    docker-php-ext-configure gd --with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/  \
-  ; else \
-    docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ \
-  ; fi
-
+docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/
 
 # install php modules
 RUN docker-php-ext-install \
