@@ -39,7 +39,7 @@ RUN apt-get update \
 RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 
 # Configure GD
-docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/
+RUN docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/
 
 # install php modules
 RUN docker-php-ext-install \
