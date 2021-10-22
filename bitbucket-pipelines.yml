@@ -46,7 +46,6 @@ pipelines:
     - step: *lint-dockerfile
   pull-requests:
     '**':
-      - step: *lint-dockerfile
       - parallel:
           - step: *build-php-7-3
           - step: *build-php-7-4
