@@ -2,9 +2,10 @@ ARG PHP_VERSION=7.4
 
 FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 
+ENV PHP_OPCACHE_JIT ''
 ENV APP_ENV development
 ENV XDEBUG_MODE debug
-ENV XDEBUG_CONFIG client_host=host.docker.internal
+ENV XDEBUG_CONFIG 'client_host=host.docker.internal output_dir=/var/www/tmp'
 ENV PHP_IDE_CONFIG serverName=docker
 
 RUN apt-get update \
@@ -28,11 +29,8 @@ RUN docker-php-ext-install xdebug
 # delete php source
 RUN docker-php-source delete
 
-# set php ini and apache config
-RUN rm /usr/local/etc/php/php.ini-development \
-    && rm /usr/local/etc/php/php.ini-production
-
-COPY php.ini /usr/local/etc/php/php.ini
+# make tmp direcotry for xdebug results (profiler, ..)
+RUN mkdir -m 0777 /var/www/tmp
 
 USER www-data
 
