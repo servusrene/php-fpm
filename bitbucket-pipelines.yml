@@ -3,93 +3,99 @@ image: atlassian/default-image:2
 options:
   docker: true
 
-pipelines:
-  default:
-    - step:
+definitions:
+  lint-dockerfile:
+    - step: &lint-dockerfile
         name: Lint the Dockerfile
         image: hadolint/hadolint:latest-debian
         script:
           - hadolint --ignore DL3008 --ignore DL3022 Dockerfile
           - hadolint --ignore DL3008 --ignore DL3022 **/Dockerfile
-    - parallel:
-        - step:
-            name: Build and Test PHP 7.3
-            script:
-              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - VERSION=7.3
-              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-            caches:
-              - docker
-        - step:
-            name: Build and Test PHP 7.4
-            script:
-              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - VERSION=7.4
-              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-            caches:
-              - docker
-        - step:
-            name: Build and Test PHP 8.0
-            script:
-              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - VERSION=8.0
-              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-            caches:
-              - docker
+  build-php-7-3:
+    - step: &build-php-7-3
+        name: Build and Test PHP 7.3
+        script:
+          - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+          - VERSION=7.3
+          - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+          - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+          - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+          - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+  build-php-7-4:
+    - step: &build-php-7-4
+        name: Build and Test PHP 7.4
+        script:
+          - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+          - VERSION=7.4
+          - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+          - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+          - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+          - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+  build-php-8-0:
+    - step: &build-php-8-0
+        name: Build and Test PHP 8.8
+        script:
+          - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+          - VERSION=8.0
+          - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+          - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+          - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+          - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+pipelines:
+  default:
+    - step: *lint-dockerfile
+  pull-requests:
+    '**':
+      - parallel:
+          - step: *build-php-7-3
+          - step: *build-php-7-4
+          - step: *build-php-8-0
+
   branches:
     master:
       - parallel:
-        - step:
-            name: Deploy PHP 7.3
-            script:
-              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - VERSION=7.3
-              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-              - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
-              - docker push "${IMAGE}:${VERSION}"
-              - docker push "${IMAGE}-dev:${VERSION}"
-              - docker push "${IMAGE}-prod:${VERSION}"
-            caches:
-              - docker
-        - step:
-            name: Deploy PHP 7.4
-            script:
-              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - VERSION=7.4
-              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-              - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
-              - docker push "${IMAGE}:${VERSION}"
-              - docker push "${IMAGE}-dev:${VERSION}"
-              - docker push "${IMAGE}-prod:${VERSION}"
-            caches:
-              - docker
-        - step:
-            name: Deploy PHP 8.0
-            script:
-              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - VERSION=8.0
-              - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
-              - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
-              - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
-              - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
-              - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
-              - docker push "${IMAGE}:${VERSION}"
-              - docker push "${IMAGE}-dev:${VERSION}"
-              - docker push "${IMAGE}-prod:${VERSION}"
-            caches:
-              - docker
+          - step:
+              name: Deploy PHP 7.3
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.3
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+                - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+                - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+                - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker push "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}-dev:${VERSION}"
+                - docker push "${IMAGE}-prod:${VERSION}"
+              caches:
+                - docker
+          - step:
+              name: Deploy PHP 7.4
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=7.4
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+                - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+                - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+                - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker push "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}-dev:${VERSION}"
+                - docker push "${IMAGE}-prod:${VERSION}"
+              caches:
+                - docker
+          - step:
+              name: Deploy PHP 8.0
+              script:
+                - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+                - VERSION=8.0
+                - IMAGE=${DOCKER_REPOSITORY}/docker/${IMAGE_NAME}
+                - docker build . --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}:${VERSION}"
+                - docker build ./development --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-dev:${VERSION}"
+                - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
+                - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REPOSITORY} --username "${DOCKER_USERNAME}" --password-stdin
+                - docker push "${IMAGE}:${VERSION}"
+                - docker push "${IMAGE}-dev:${VERSION}"
+                - docker push "${IMAGE}-prod:${VERSION}"
+              caches:
+                - docker
