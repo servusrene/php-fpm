@@ -3,11 +3,8 @@ ARG PHP_VERSION=7.4
 FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 
 ENV APP_ENV production
-
-# set php ini and apache config
-RUN rm /usr/local/etc/php/php.ini-development \
-    && rm /usr/local/etc/php/php.ini-production
-
-COPY php.ini /usr/local/etc/php/php.ini
+ENV PHP_DISPLAY_ERRORS 'Off'
+ENV PHP_ERROR_REPORTING ''
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS 0
 
 USER www-data
