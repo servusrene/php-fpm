@@ -5,7 +5,7 @@ FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 ENV PHP_OPCACHE_JIT ''
 ENV APP_ENV development
 ENV XDEBUG_MODE debug
-ENV XDEBUG_CONFIG 'client_host=host.docker.internal output_dir=/var/www/tmp'
+ENV XDEBUG_CONFIG 'profiler_output_name=cachegrind.out.%R client_host=host.docker.internal output_dir=/var/www/tmp'
 ENV PHP_IDE_CONFIG serverName=docker
 
 RUN apt-get update \
