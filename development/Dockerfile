@@ -17,20 +17,13 @@ RUN apt-get update \
 COPY .bashrc /root/.bashrc
 COPY --chown=www-data:www-data .bashrc /var/www/.bashrc
 
-# extract php source
-RUN docker-php-source extract
-
-# get php ext sources
-RUN docker-php-ext-get xdebug 3.0.4
-
-# install php modules
-RUN docker-php-ext-install xdebug
-
-# delete php source
-RUN docker-php-source delete
-
-# make tmp direcotry for xdebug results (profiler, ..)
-RUN mkdir -m 0777 /var/www/tmp
+# install xdebug
+RUN docker-php-source extract \
+ && docker-php-ext-get xdebug 3.0.4 \
+ && docker-php-ext-install xdebug \
+ && docker-php-source delete \
+ # make tmp directory for xdebug results (profiler, ..)
+  mkdir -m 0777 /var/www/tmp
 
 USER www-data
 
