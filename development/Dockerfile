@@ -18,11 +18,12 @@ COPY .bashrc /root/.bashrc
 COPY --chown=www-data:www-data .bashrc /var/www/.bashrc
 
 # install xdebug
-RUN docker-php-source extract && \
-    docker-php-ext-get xdebug 3.0.4 && \
-    docker-php-ext-install xdebug && \
-    docker-php-source delete && \
-    mkdir -m 0777 /var/www/tmp # make tmp directory for xdebug results (profiler, ..)
+RUN docker-php-source extract \
+ && docker-php-ext-get xdebug 3.1.1 \
+ && docker-php-ext-install xdebug \
+ && docker-php-source delete \
+ # make tmp directory for xdebug results (profiler, ..)
+  mkdir -m 0777 /var/www/tmp
 
 USER www-data
 
