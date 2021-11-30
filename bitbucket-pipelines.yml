@@ -23,7 +23,7 @@ definitions:
           - docker build ./production --build-arg PHP_VERSION=${VERSION} --tag "${IMAGE}-prod:${VERSION}"
   build-php-8-0:
     - step: &build-php-8-0
-        name: Build and Test PHP 8.8
+        name: Build and Test PHP 8.0
         script:
           - IMAGE_NAME=$BITBUCKET_REPO_SLUG
           - VERSION=8.0
