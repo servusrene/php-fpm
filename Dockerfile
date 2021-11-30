@@ -31,6 +31,7 @@ RUN apt-get update \
         libfreetype6-dev \
         libpng-dev \
         libjpeg62-turbo-dev \
+        libwebp-dev \
         libmagickwand-dev \
         libssl-dev \
         libzip-dev \
@@ -47,13 +48,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure imap
-RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl
-
-# Configure GD
-RUN docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/
-
-# install php modules
-RUN docker-php-ext-install \
+RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    # Configure GD
+  && docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ --with-webp=/usr/local \
+  # install php modules
+  && docker-php-ext-install \
     imap \
     gd \
     zip \
@@ -64,20 +63,12 @@ RUN docker-php-ext-install \
     mysqli \
     curl \
     calendar \
-    opcache
-
-# get php ext sources
-# imagegick not working atm with php8
-# see https://github.com/Imagick/imagick/issues/358
-# waiting release for PECL package
-RUN if dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0"; then \
-    docker-php-source extract && \
-    docker-php-ext-get imagick 3.4.4 && \
-    docker-php-ext-install imagick \
-  ; fi
-
-# delete php source
-RUN docker-php-source delete
+    opcache \
+    # install imagick
+  && pecl install imagick \
+  && docker-php-ext-enable imagick \
+  && rm -r /tmp/pear \
+  && docker-php-source delete
 
 # copying php ini, values should be set via ENV
 RUN rm /usr/local/etc/php/php.ini-development \
