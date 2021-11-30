@@ -64,10 +64,11 @@ RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --wi
     curl \
     calendar \
     opcache \
-    # install imagick
-  && pecl install imagick \
-  && docker-php-ext-enable imagick \
-  && rm -r /tmp/pear \
+    && if dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0"; then \
+      docker-php-source extract && \
+      docker-php-ext-get imagick 3.5.2 && \
+      docker-php-ext-install imagick \
+    ; fi \
   && docker-php-source delete
 
 # copying php ini, values should be set via ENV
