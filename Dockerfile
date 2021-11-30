@@ -66,7 +66,7 @@ RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --wi
     opcache \
     && if dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0"; then \
       docker-php-source extract && \
-      docker-php-ext-get imagick 3.5.2 && \
+      docker-php-ext-get imagick 3.4.4 && \
       docker-php-ext-install imagick \
     ; fi \
   && docker-php-source delete
