@@ -2,11 +2,11 @@ ARG PHP_VERSION=7.4
 
 FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
 
-ENV PHP_OPCACHE_JIT ''
-ENV APP_ENV development
-ENV XDEBUG_MODE debug
-ENV XDEBUG_CONFIG 'profiler_output_name=cachegrind.out.%R client_host=host.docker.internal output_dir=/var/www/tmp'
-ENV PHP_IDE_CONFIG serverName=docker
+ENV PHP_OPCACHE_JIT='' \
+    APP_ENV=development \
+    XDEBUG_MODE=debug \
+    XDEBUG_CONFIG='profiler_output_name=cachegrind.out.%R client_host=host.docker.internal output_dir=/var/www/tmp' \
+    PHP_IDE_CONFIG='serverName=docker'
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
