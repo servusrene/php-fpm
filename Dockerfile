@@ -5,16 +5,16 @@ FROM php:${PHP_VERSION}-fpm
 LABEL clicksports.php-fpm.maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
 LABEL clicksports.php-fpm.version="1.4"
 
-ENV PHP_MAX_EXECUTION_TIME 60
-ENV PHP_MEMORY_LIMIT '512M'
-ENV PHP_ERROR_REPORTING 'E_ALL'
-ENV PHP_DISPLAY_ERRORS 'On'
-ENV PHP_UPLOAD_MAX_FILESIZE '16M'
-ENV PHP_OPCACHE_ENABLE 1
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS 1
-ENV PHP_OPCACHE_REVALIDATE_FREQ 1
-ENV PHP_OPCACHE_JIT 'tracing'
-ENV PHP_OPCACHE_PRELOAD ''
+ENV PHP_MAX_EXECUTION_TIME=60 \
+    PHP_MEMORY_LIMIT='512M' \
+    PHP_ERROR_REPORTING='E_ALL' \
+    PHP_DISPLAY_ERRORS='On' \
+    PHP_UPLOAD_MAX_FILESIZE='16M' \
+    PHP_OPCACHE_ENABLE=1 \
+    PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 \
+    PHP_OPCACHE_REVALIDATE_FREQ=1 \
+    PHP_OPCACHE_JIT='tracing' \
+    PHP_OPCACHE_PRELOAD=''
 
 # set workdir
 WORKDIR /var/www/html
@@ -63,6 +63,7 @@ RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --wi
     mysqli \
     curl \
     calendar \
+    intl \
     opcache \
     && if dpkg --compare-versions "$PHP_VERSION" "lt" "8.0.0"; then \
       docker-php-source extract && \
