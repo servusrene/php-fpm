@@ -1,9 +1,9 @@
-ARG PHP_VERSION=7.4
+ARG PHP_VERSION=8.0
 
 FROM php:${PHP_VERSION}-fpm
 
 LABEL php-fpm.maintainer="Alexander S., René"
-LABEL php-fpm.version="1.3"
+LABEL php-fpm.version="1.5"
 
 ENV PHP_MAX_EXECUTION_TIME=60 \
     PHP_MEMORY_LIMIT='512M' \
