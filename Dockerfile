@@ -1,9 +1,9 @@
-ARG PHP_VERSION=7.4
+ARG PHP_VERSION=8.0
 
 FROM php:${PHP_VERSION}-fpm
 
 LABEL clicksports.php-fpm.maintainer="Alexander Schlegel, René Müller CLICKSPORTS"
-LABEL clicksports.php-fpm.version="1.4"
+LABEL clicksports.php-fpm.version="1.5"
 
 ENV PHP_MAX_EXECUTION_TIME=60 \
     PHP_MEMORY_LIMIT='512M' \
