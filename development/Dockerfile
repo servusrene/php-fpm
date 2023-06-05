@@ -1,6 +1,6 @@
 ARG PHP_VERSION=8.0
 
-FROM repo-clicksports.clicksports.de/docker/php-fpm:${PHP_VERSION}
+FROM ghcr.io/clicksports/php-fpm:${PHP_VERSION}
 
 ENV PHP_OPCACHE_JIT='' \
     APP_ENV=development \
