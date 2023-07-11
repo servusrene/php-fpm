@@ -8,8 +8,12 @@ inputs:
     required: true
     description: 'A php version that should be using to build the image'
   context:
-    required: false
+    required: true
     description: 'Path to folder'
+    default: .
+  tag-suffix:
+    required: false
+    description: 'Suffix for sub versions of an image'
 
 runs:
   using: composite
@@ -25,10 +29,10 @@ runs:
         password: ${{ inputs.GITHUB_TOKEN }}
 
     - name: Build and Push
-      if: ${{ !inputs.context }}
+      if: ${{ !inputs.subtag }}
       uses: docker/build-push-action@v4
       with:
-        context: .
+        context: ${{ inputs.context }}
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.version }}
@@ -37,13 +41,13 @@ runs:
         cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.version }}
 
     - name: Build and Push
-      if: ${{ inputs.context }}
+      if: ${{ inputs.tag-suffix }}
       uses: docker/build-push-action@v4
       with:
-        context: ${{ inputs.context.path }}
+        context: ${{ inputs.context }}
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.version }}
-        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ inputs.context.tag }}:${{ inputs.version }}
-        cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.context.tag }}-${{ inputs.version }}
-        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.context.tag }}-${{ inputs.version }}
+        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ inputs.tag-suffix }}:${{ inputs.version }}
+        cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.tag-suffix }}-${{ inputs.version }}
+        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.tag-suffix }}-${{ inputs.version }}

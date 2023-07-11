@@ -25,6 +25,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ inputs.version }}
+          context: .
 
   build-push-php:
     runs-on: ubuntu-latest
@@ -42,4 +43,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ inputs.version }}
-          context: ${{ matrix.context }}
+          context: ${{ matrix.context.path }}
+          tag-suffix: ${{ matrix.context.tag }}
