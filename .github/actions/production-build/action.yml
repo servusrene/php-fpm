@@ -22,25 +22,25 @@ runs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and Push
-      if: ${{ !input.context }}
+      if: ${{ !inputs.context }}
       uses: docker/build-push-action@v4
       with:
         context: .
         push: true
         build-args: |
-          PHP_VERSION=${{ matrix.version }}
-        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}
-        cache-from: type=gha,scope=${{ github.ref_name }}-${{ matrix.version }}
-        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ matrix.version }}
+          PHP_VERSION=${{ inputs.version }}
+        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+        cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.version }}
+        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.version }}
 
     - name: Build and Push
-      if: ${{ input.context }}
+      if: ${{ inputs.context }}
       uses: docker/build-push-action@v4
       with:
-        context: ${{ matrix.context.path }}
+        context: ${{ inputs.context.path }}
         push: true
         build-args: |
-          PHP_VERSION=${{ matrix.version }}
-        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ matrix.context.tag }}:${{ matrix.version }}
-        cache-from: type=gha,scope=${{ github.ref_name }}-${{ matrix.context.tag }}-${{ matrix.version }}
-        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ matrix.context.tag }}-${{ matrix.version }}
+          PHP_VERSION=${{ inputs.version }}
+        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ inputs.context.tag }}:${{ inputs.version }}
+        cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.context.tag }}-${{ inputs.version }}
+        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.context.tag }}-${{ inputs.version }}
