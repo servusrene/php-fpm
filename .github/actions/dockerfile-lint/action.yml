@@ -1,0 +1,16 @@
+name: "Dockerfile Linting"
+description: "Linting the Docker file with given path"
+inputs:
+  dockerfile:
+    required: true
+    default: "Dockerfile"
+    description: "Path to the dockerfile which should be linted"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: ${{ inputs.path }}
+        recursive: true
+        ignore: DL3008,DL3022

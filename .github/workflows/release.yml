@@ -1,0 +1,16 @@
+name: Release Update
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Linters
+    steps:
+      - uses: ./.github/workflows/lint
+  build:
+    name: Production Build and Push
+    steps:
+      - uses: ./.github/workflows/production-build-and-push

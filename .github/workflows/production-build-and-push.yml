@@ -1,9 +1,7 @@
-name: CI
+name: Production Build and Push
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
   schedule:
     - cron: '0 0 * * */2'
 
@@ -12,21 +10,6 @@ env:
   IMAGE_NAME: clicksports/php-fpm
 
 jobs:
-  lint-dockerfile:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v3
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: "Dockerfile"
-          ignore: DL3008,DL3022
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: "**/Dockerfile"
-          recursive: true
-          ignore: DL3008,DL3022
-
   build-php-base:
     runs-on: ubuntu-latest
     permissions:
@@ -49,7 +32,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Export
+      - name: Build and Push
         uses: docker/build-push-action@v4
         with:
           context: .
