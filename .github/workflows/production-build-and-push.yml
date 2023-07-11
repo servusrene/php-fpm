@@ -2,7 +2,7 @@ name: Production Build and Push
 
 on:
   workflow_call:
-    input:
+    inputs:
       version:
         description: 'A php version that should be using to build the image'
         required: true
@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: ./.github/actions/production-build
         with:
-          version: ${{ input.version }}
+          version: ${{ inputs.version }}
 
   build-push-php:
     runs-on: ubuntu-latest
@@ -35,5 +35,5 @@ jobs:
     steps:
       - uses: ./.github/actions/production-build
         with:
-          version: ${{ input.version }}
+          version: ${{ inputs.version }}
           context: ${{ matrix.context }}
