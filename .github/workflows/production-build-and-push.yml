@@ -24,6 +24,8 @@ jobs:
       - uses: ./.github/actions/production-build
         with:
           version: ${{ inputs.version }}
+        secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   build-push-php:
     runs-on: ubuntu-latest
@@ -41,3 +43,5 @@ jobs:
         with:
           version: ${{ inputs.version }}
           context: ${{ matrix.context }}
+        secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
