@@ -11,6 +11,6 @@ runs:
   steps:
     - uses: hadolint/hadolint-action@v3.1.0
       with:
-        dockerfile: ${{ inputs.path }}
+        dockerfile: ${{ inputs.dockerfile }}
         recursive: true
         ignore: DL3008,DL3022
