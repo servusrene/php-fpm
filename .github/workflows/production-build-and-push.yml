@@ -8,10 +8,6 @@ on:
         required: true
         type: string
 
-env:
-  REPOSITORY: ghcr.io
-  IMAGE_NAME: clicksports/php-fpm
-
 jobs:
   build-base:
     runs-on: ubuntu-latest
