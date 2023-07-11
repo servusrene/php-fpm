@@ -1,0 +1,30 @@
+name: Check for rebuild
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'A php version that should be using to build the image'
+        required: true
+        type: string
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      needs-updating: ${{ steps.check.outputs.needs-updating }}
+    steps:
+      - name: Check if update on base image is available
+        id: check
+        uses: lucacome/docker-image-update-checker@v1
+        with:
+          base-image: php:${{ inputs.version }}-fpm
+          image: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+
+  build:
+    name: Production Build and Push
+    if: needs.check.outputs.needs-updating == 'true'
+    needs: check
+    uses: ./.github/workflows/production-build-and-push.yml
+    with:
+      version: ${{ inputs.version }}

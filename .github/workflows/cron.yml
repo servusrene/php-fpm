@@ -1,0 +1,18 @@
+name: Release Update
+
+on:
+  schedule:
+    - cron: '0 0 * * */2'
+
+jobs:
+  lint:
+    name: Linters
+    uses: ./.github/workflows/lint.yml
+  build:
+    name: Check for rebuild
+    strategy:
+      matrix:
+        version: [ '8.0', '8.1', '8.2' ]
+    uses: ./.github/workflows/check-for-rebuild.yml
+    with:
+      version: ${{ matrix.version }}
