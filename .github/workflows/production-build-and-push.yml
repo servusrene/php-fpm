@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: clicksports/php-fpm
 
 jobs:
-  build-php-base:
+  build-base:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -27,7 +27,7 @@ jobs:
           version: ${{ inputs.version }}
           context: .
 
-  build-push-php:
+  build-env:
     runs-on: ubuntu-latest
     permissions:
       contents: read
