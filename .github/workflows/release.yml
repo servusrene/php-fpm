@@ -8,7 +8,7 @@ on:
 jobs:
   lint:
     name: Linters
-    uses: ./.github/workflows/lint
+    uses: ./.github/workflows/lint.yml
   build:
     name: Production Build and Push
-    uses: ./.github/workflows/production-build-and-push
+    uses: ./.github/workflows/production-build-and-push.yml
