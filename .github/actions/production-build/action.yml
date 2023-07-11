@@ -1,12 +1,15 @@
 name: Production Build
 description: Bulid and Push the image
 inputs:
+  github_token:
+    required: true
+    description: 'token for github packages'
   version:
     required: true
-    description: php version
+    description: 'A php version that should be using to build the image'
   context:
     required: false
-    description: Path to folder
+    description: 'Path to folder'
 
 runs:
   using: composite
@@ -19,7 +22,7 @@ runs:
       with:
         registry: ${{ env.REPOSITORY }}
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.GITHUB_TOKEN }}
 
     - name: Build and Push
       if: ${{ !inputs.context }}
