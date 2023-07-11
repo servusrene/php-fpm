@@ -1,0 +1,49 @@
+name: Production Build
+description: Bulid and Push the image
+inputs:
+  version:
+    required: true
+    description: php version
+  context:
+    required: false
+    description: Path to folder
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to GHCR
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REPOSITORY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and Push
+      if: ${{ !input.context }}
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        build-args: |
+          PHP_VERSION=${{ matrix.version }}
+        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ matrix.version }}
+        cache-from: type=gha,scope=${{ github.ref_name }}-${{ matrix.version }}
+        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ matrix.version }}
+
+    - name: Build and Push
+      if: ${{ input.context }}
+      uses: docker/build-push-action@v4
+      with:
+        context: ${{ matrix.context.path }}
+        push: true
+        build-args: |
+          PHP_VERSION=${{ matrix.version }}
+        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ matrix.context.tag }}:${{ matrix.version }}
+        cache-from: type=gha,scope=${{ github.ref_name }}-${{ matrix.context.tag }}-${{ matrix.version }}
+        cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ matrix.context.tag }}-${{ matrix.version }}
