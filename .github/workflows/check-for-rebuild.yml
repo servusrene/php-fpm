@@ -19,7 +19,7 @@ jobs:
         uses: lucacome/docker-image-update-checker@v1
         with:
           base-image: php:${{ inputs.version }}-fpm
-          image: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+          image: ${{ vars.REPOSITORY }}/${{ vars.IMAGE_NAME }}:${{ inputs.version }}
 
   build:
     name: Production Build and Push

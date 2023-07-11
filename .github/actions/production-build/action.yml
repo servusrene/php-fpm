@@ -24,7 +24,7 @@ runs:
     - name: Login to GHCR
       uses: docker/login-action@v2
       with:
-        registry: ${{ env.REPOSITORY }}
+        registry: ${{ vars.REPOSITORY }}
         username: ${{ github.actor }}
         password: ${{ inputs.GITHUB_TOKEN }}
 
@@ -36,7 +36,7 @@ runs:
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.version }}
-        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+        tags: ${{ vars.REPOSITORY }}/${{ vars.IMAGE_NAME }}:${{ inputs.version }}
         cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.version }}
         cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.version }}
 
@@ -48,6 +48,6 @@ runs:
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.version }}
-        tags: ${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}-${{ inputs.tag-suffix }}:${{ inputs.version }}
+        tags: ${{ vars.REPOSITORY }}/${{ vars.IMAGE_NAME }}-${{ inputs.tag-suffix }}:${{ inputs.version }}
         cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.tag-suffix }}-${{ inputs.version }}
         cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.tag-suffix }}-${{ inputs.version }}
