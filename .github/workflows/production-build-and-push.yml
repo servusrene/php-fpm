@@ -23,9 +23,8 @@ jobs:
         uses: actions/checkout@v3
       - uses: ./.github/actions/production-build
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ inputs.version }}
-        secrets:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
   build-push-php:
     runs-on: ubuntu-latest
@@ -41,7 +40,6 @@ jobs:
         uses: actions/checkout@v3
       - uses: ./.github/actions/production-build
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ inputs.version }}
           context: ${{ matrix.context }}
-        secrets:
-          token: ${{ secrets.GITHUB_TOKEN }}
