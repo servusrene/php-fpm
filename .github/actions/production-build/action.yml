@@ -35,7 +35,7 @@ runs:
         password: ${{ inputs.github_token }}
 
     - name: Build and Push
-      if: ${{ !inputs.subtag }}
+      if: ${{ !inputs.tag-suffix }}
       uses: docker/build-push-action@v4
       with:
         context: ${{ inputs.context }}}
