@@ -2,12 +2,9 @@ name: Release Update
 
 on:
   schedule:
-    - cron: '0 0 * * */2'
+    - cron: '*/15 * * * *'
 
 jobs:
-  lint:
-    name: Linters
-    uses: ./.github/workflows/lint.yml
   build:
     name: Check for rebuild
     strategy:
