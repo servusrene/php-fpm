@@ -1,4 +1,4 @@
-name: Release Update
+name: "cron: Check for rebuild"
 
 on:
   schedule:
