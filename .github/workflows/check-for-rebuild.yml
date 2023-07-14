@@ -14,6 +14,13 @@ jobs:
     outputs:
       needs-updating: ${{ steps.check.outputs.needs-updating }}
     steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.REPOSITORY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.github_token }}
+
       - name: Check if update on base image is available
         id: check
         uses: twiddler/is-my-docker-parent-image-out-of-date@v1
