@@ -38,7 +38,7 @@ runs:
       if: ${{ !inputs.tag-suffix }}
       uses: docker/build-push-action@v4
       with:
-        context: ${{ inputs.context }}}
+        context: ${{ inputs.context }}
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.version }}
