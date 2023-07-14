@@ -12,7 +12,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      needs-updating: ${{ steps.check.outputs.needs-updating }}
+      out-of-date: ${{ steps.check.outputs.out-of-date }}
     steps:
       - name: Login to GHCR
         uses: docker/login-action@v2
@@ -30,7 +30,7 @@ jobs:
 
   build:
     name: Production Build and Push
-    if: needs.check.outputs.needs-updating == 'true'
+    if: needs.check.outputs.out-of-date == 'true'
     needs: check
     uses: ./.github/workflows/production-build-and-push.yml
     with:
