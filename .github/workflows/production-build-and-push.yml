@@ -20,6 +20,8 @@ jobs:
       - uses: ./.github/actions/production-build
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ vars.REPOSITORY }}
+          image_name: ${{ vars.IMAGE_NAME }}
           version: ${{ inputs.version }}
           context: .
 
@@ -38,6 +40,8 @@ jobs:
       - uses: ./.github/actions/production-build
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ vars.REPOSITORY }}
+          image_name: ${{ vars.IMAGE_NAME }}
           version: ${{ inputs.version }}
           context: ${{ matrix.context.path }}
           tag-suffix: ${{ matrix.context.tag }}
