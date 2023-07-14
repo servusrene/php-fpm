@@ -42,7 +42,7 @@ runs:
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.version }}
-        tags: ${{ inputs.image_name }}:${{ inputs.version }}
+        tags: ${{ inputs.repository }}/${{ inputs.image_name }}:${{ inputs.version }}
         cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.version }}
         cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.version }}
 
@@ -54,6 +54,6 @@ runs:
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.version }}
-        tags: ${{ inputs.image_name }}-${{ inputs.tag-suffix }}:${{ inputs.version }}
+        tags: ${{ inputs.repository }}/${{ inputs.image_name }}-${{ inputs.tag-suffix }}:${{ inputs.version }}
         cache-from: type=gha,scope=${{ github.ref_name }}-${{ inputs.tag-suffix }}-${{ inputs.version }}
         cache-to: type=gha,mode=max,scope=${{ github.ref_name }}-${{ inputs.tag-suffix }}-${{ inputs.version }}
