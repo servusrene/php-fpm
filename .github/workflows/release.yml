@@ -8,12 +8,12 @@ on:
 jobs:
   lint:
     name: Linters
-    uses: ./.github/workflows/lint.yml
+    uses: ./.github/workflows/partials/lint.yml
   build:
     name: Production Build and Push
     strategy:
       matrix:
         version: [ '8.0', '8.1', '8.2' ]
-    uses: ./.github/workflows/production-build-and-push.yml
+    uses: ./.github/workflows/partials/production-build-and-push.yml
     with:
       version: ${{ matrix.version }}
