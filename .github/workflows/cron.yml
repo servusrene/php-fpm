@@ -1,4 +1,4 @@
-name: "cron: Check for rebuild"
+name: "cron: rebuild"
 
 on:
   schedule:
@@ -11,6 +11,6 @@ jobs:
     strategy:
       matrix:
         version: [ '8.0', '8.1', '8.2' ]
-    uses: ./.github/workflows/check-for-rebuild.yml
+    uses: ./.github/workflows/partials/check-for-rebuild.yml
     with:
       version: ${{ matrix.version }}

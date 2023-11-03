@@ -32,6 +32,6 @@ jobs:
     name: Production Build and Push
     if: needs.check.outputs.out-of-date == 'true'
     needs: check
-    uses: ./.github/workflows/production-build-and-push.yml
+    uses: ./.github/workflows/partials/production-build-and-push.yml
     with:
       version: ${{ inputs.version }}
