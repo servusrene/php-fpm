@@ -13,7 +13,7 @@ jobs:
     name: Production Build and Push
     strategy:
       matrix:
-        version: [ '8.0', '8.1', '8.2' ]
+        version: [ '8.0', '8.1', '8.2', '8.3' ]
     uses: ./.github/workflows/production-build-and-push.yml
     with:
       version: ${{ matrix.version }}
