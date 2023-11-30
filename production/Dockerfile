@@ -1,6 +1,6 @@
 ARG PHP_VERSION=8.0
 
-FROM ghcr.io/clicksports/php-fpm:${PHP_VERSION}
+FROM ghcr.io/rene-mueller/php-fpm:${PHP_VERSION}
 
 ENV APP_ENV=production \
     PHP_DISPLAY_ERRORS='Off' \
