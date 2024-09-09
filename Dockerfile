@@ -67,6 +67,7 @@ RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --wi
     calendar \
     intl \
     opcache \
+    pcntl \
   ## install imagick
   && docker-php-source extract \
   && docker-php-ext-get imagick 3.7.0 \
