@@ -22,9 +22,9 @@ ENV PHP_MAX_EXECUTION_TIME=60 \
 WORKDIR /var/www/html
 
 #set SHELL
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 
-# add bash scripts
+# add sh scripts
 COPY docker-php-ext-get /usr/local/bin/
 
 # install non php modules
@@ -81,5 +81,3 @@ RUN rm /usr/local/etc/php/php.ini-development \
 COPY php.ini /usr/local/etc/php/php.ini
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
-
-WORKDIR /var/www/html
