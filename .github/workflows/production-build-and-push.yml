@@ -21,8 +21,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ vars.REPOSITORY }}
-          image_name: ${{ vars.IMAGE_NAME }}
-          version: ${{ inputs.version }}
+          image-name: ${{ vars.IMAGE_NAME }}
+          image-version: ${{ inputs.version }}
           context: .
 
   build-env:
@@ -41,7 +41,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ vars.REPOSITORY }}
-          image_name: ${{ vars.IMAGE_NAME }}
-          version: ${{ inputs.version }}
+          image-name: ${{ vars.IMAGE_NAME }}-${{ matrix.context.tag }}
+          image-version: ${{ inputs.version }}
           context: ${{ matrix.context.path }}
-          tag-suffix: ${{ matrix.context.tag }}
