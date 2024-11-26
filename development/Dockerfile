@@ -13,10 +13,6 @@ RUN apk update \
         nano \
     && rm -rf /var/cache/apk/*
 
-# copy bash layout
-COPY .bashrc /root/.bashrc
-COPY --chown=www-data:www-data .bashrc /var/www/.bashrc
-
 # install xdebug
 # TODO remove if when xdebug is ready
 RUN if dpkg --compare-versions "$PHP_VERSION" "lt" "8.3.0"; then \
