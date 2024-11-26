@@ -43,6 +43,7 @@ RUN apk update \
         krb5-dev \
         curl-dev \
         zlib-dev \
+        icu-dev \
         curl \
         zip \
         unzip \
