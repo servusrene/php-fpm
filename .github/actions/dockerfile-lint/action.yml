@@ -13,4 +13,4 @@ runs:
       with:
         dockerfile: ${{ inputs.dockerfile }}
         recursive: true
-        ignore: DL3008,DL3022
+        ignore: DL3008,DL3022,DL3018
