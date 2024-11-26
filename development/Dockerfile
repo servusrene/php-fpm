@@ -8,10 +8,10 @@ ENV PHP_OPCACHE_JIT='' \
     XDEBUG_CONFIG='profiler_output_name=cachegrind.out.%R client_host=host.docker.internal output_dir=/var/www/tmp' \
     PHP_IDE_CONFIG='serverName=docker'
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends -y \
+RUN apk update \
+    && apk add --no-cache \
         nano \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/cache/apk/*
 
 # copy bash layout
 COPY .bashrc /root/.bashrc

@@ -1,9 +1,9 @@
 ARG PHP_VERSION=8.0
 
-FROM php:${PHP_VERSION}-fpm
+FROM php:${PHP_VERSION}-fpm-alpine
 
 LABEL rene-mueller.php-fpm.maintainer="René Müller"
-LABEL rene-mueller.php-fpm.version="1.6"
+LABEL rene-mueller.php-fpm.version="1.7"
 
 ENV PHP_MAX_EXECUTION_TIME=60 \
     PHP_MEMORY_LIMIT='512M' \
@@ -28,26 +28,26 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY docker-php-ext-get /usr/local/bin/
 
 # install non php modules
-RUN apt-get update \
-    && apt-get install --no-install-recommends -y \
-        libfreetype6-dev \
+RUN apk update \
+    && apk add --no-cache \
+        freetype-dev \
         libpng-dev \
-        libjpeg62-turbo-dev \
+        libjpeg-turbo-dev \
         libwebp-dev \
-        libmagickwand-dev \
-        libssl-dev \
+        imagemagick-dev \
+        openssl-dev \
         libzip-dev \
         libxml2-dev \
-        libonig-dev \
-        libc-client-dev \
-        libkrb5-dev \
-        libcurl4-openssl-dev \
-        zlib1g-dev \
+        oniguruma-dev \
+        imap-dev \
+        krb5-dev \
+        curl-dev \
+        zlib-dev \
         curl \
         zip \
         unzip \
         git \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/cache/apk/*
 
 # Configure imap
 RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
