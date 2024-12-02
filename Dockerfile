@@ -31,6 +31,7 @@ COPY docker-php-ext-get /usr/local/bin/
 RUN apk update \
     && apk add --no-cache \
         freetype-dev \
+        libgomp \
         libpng-dev \
         libjpeg-turbo-dev \
         libwebp-dev \
