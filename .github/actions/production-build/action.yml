@@ -35,6 +35,7 @@ runs:
       uses: docker/build-push-action@v4
       with:
         context: ${{ inputs.context }}
+        platforms: linux/amd64,linux/arm64
         push: true
         build-args: |
           PHP_VERSION=${{ inputs.image-version }}
