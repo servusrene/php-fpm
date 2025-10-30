@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.1
 
 FROM ghcr.io/servusrene/php-fpm:${PHP_VERSION}
 
@@ -14,16 +14,12 @@ RUN apk update \
     && rm -rf /var/cache/apk/*
 
 # install xdebug
-# TODO remove if when xdebug is ready
-RUN if dpkg --compare-versions "$PHP_VERSION" "lt" "8.3.0"; then \
-    docker-php-source extract \
- && docker-php-ext-get xdebug 3.2.1 \
+RUN docker-php-source extract \
+ && docker-php-ext-get xdebug 3.4.7 \
  && docker-php-ext-install xdebug \
  && docker-php-source delete \
  # make tmp directory for xdebug results (profiler, ..)
-  mkdir -m 0777 /var/www/tmp \
-; fi
-
+ && mkdir -m 0777 /var/www/tmp
 
 USER www-data
 

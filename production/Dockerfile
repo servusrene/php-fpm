@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.1
 
 FROM ghcr.io/servusrene/php-fpm:${PHP_VERSION}
 

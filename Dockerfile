@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.1
 
 FROM php:${PHP_VERSION}-fpm-alpine
 
@@ -72,7 +72,7 @@ RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --wi
     pcntl \
   ## install imagick
   && docker-php-source extract \
-  && docker-php-ext-get imagick 3.7.0 \
+  && docker-php-ext-get imagick 3.8.0 \
   && docker-php-ext-install imagick \
   && docker-php-source delete
 
