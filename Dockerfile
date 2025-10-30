@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.1
 
 FROM php:${PHP_VERSION}-fpm-alpine
 
@@ -26,6 +26,8 @@ SHELL ["/bin/sh", "-o", "pipefail", "-c"]
 
 # add sh scripts
 COPY docker-php-ext-get /usr/local/bin/
+COPY version-compare /usr/local/bin/
+RUN chmod +x /usr/local/bin/version-compare
 
 # install non php modules
 RUN apk update \
@@ -51,28 +53,47 @@ RUN apk update \
         git \
     && rm -rf /var/cache/apk/*
 
-# Configure imap
-RUN set -eux; PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    # Configure GD
-  && docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ --with-webp=/usr/local \
-  # install php modules
-  && docker-php-ext-install \
-    imap \
-    gd \
-    zip \
-    mbstring \
-    pdo \
-    pdo_mysql \
-    xml \
-    mysqli \
-    curl \
-    calendar \
-    intl \
-    opcache \
-    pcntl \
-  ## install imagick
-  && docker-php-source extract \
-  && docker-php-ext-get imagick 3.7.0 \
+# Configure and install PHP extensions
+RUN set -eux; \
+    docker-php-source extract \
+  # Configure and install extensions based on PHP version
+  && if version-compare "$PHP_VERSION" ge 8.4.0; then \
+      # PHP 8.4+: pdo, xml, curl are built-in; imap moved to PECL
+      docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+      && docker-php-ext-install \
+        gd \
+        zip \
+        mbstring \
+        pdo_mysql \
+        mysqli \
+        calendar \
+        intl \
+        opcache \
+        pcntl \
+      # Install imap from PECL
+      && docker-php-ext-get imap 1.0.3 \
+      && docker-php-ext-install imap; \
+    else \
+      # PHP < 8.4: traditional extension installation
+      PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+      && docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ --with-webp=/usr/local \
+      && docker-php-ext-install \
+        imap \
+        gd \
+        zip \
+        mbstring \
+        pdo \
+        pdo_mysql \
+        xml \
+        mysqli \
+        curl \
+        calendar \
+        intl \
+        opcache \
+        pcntl; \
+    fi \
+  # Install imagick via PECL (all versions)
+  && docker-php-ext-get imagick 3.8.0 \
   && docker-php-ext-install imagick \
   && docker-php-source delete
 

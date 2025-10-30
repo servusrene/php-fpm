@@ -1,0 +1,57 @@
+#!/usr/bin/env sh
+# Version comparison utility (replacement for dpkg --compare-versions)
+# Usage: version-compare VERSION1 OPERATOR VERSION2
+# Operators: lt, le, eq, ne, ge, gt
+# Returns: 0 (true) or 1 (false)
+
+set -e
+
+usage() {
+    echo "usage: $0 version1 operator version2"
+    echo "operators: lt (less than), le (less or equal), eq (equal),"
+    echo "           ne (not equal), ge (greater or equal), gt (greater than)"
+    echo "   ie: $0 8.4.0 ge 8.3.0"
+}
+
+if [ $# -ne 3 ]; then
+    usage >&2
+    exit 1
+fi
+
+VERSION1="$1"
+OPERATOR="$2"
+VERSION2="$3"
+
+# Use sort -V for semantic version comparison (BusyBox compatible)
+case "$OPERATOR" in
+    lt)
+        # VERSION1 < VERSION2
+        printf '%s\n%s\n' "$VERSION1" "$VERSION2" | sort -V -c > /dev/null 2>&1 && exit 1 || exit 0
+        ;;
+    le)
+        # VERSION1 <= VERSION2
+        printf '%s\n%s\n' "$VERSION2" "$VERSION1" | sort -V -c > /dev/null 2>&1 && exit 0 || exit 1
+        ;;
+    eq)
+        # VERSION1 == VERSION2
+        [ "$VERSION1" = "$VERSION2" ] && exit 0 || exit 1
+        ;;
+    ne)
+        # VERSION1 != VERSION2
+        [ "$VERSION1" != "$VERSION2" ] && exit 0 || exit 1
+        ;;
+    ge)
+        # VERSION1 >= VERSION2
+        printf '%s\n%s\n' "$VERSION2" "$VERSION1" | sort -V -c > /dev/null 2>&1 && exit 0 || exit 1
+        ;;
+    gt)
+        # VERSION1 > VERSION2
+        printf '%s\n%s\n' "$VERSION1" "$VERSION2" | sort -V -c > /dev/null 2>&1 && exit 1 || exit 0
+        ;;
+    *)
+        echo >&2 "error: unknown operator '$OPERATOR'"
+        usage >&2
+        exit 1
+        ;;
+esac
+
