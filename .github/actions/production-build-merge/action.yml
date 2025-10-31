@@ -52,16 +52,18 @@ runs:
     - name: Create Multi-Arch Manifest
       shell: bash
       run: |
-        # Create multi-arch manifest from temporary architecture-specific images
+        # Create multi-arch manifest from permanent architecture-specific tags
+        # The manifest references these tags, which hold the layers
         IMAGE_NAME="${{ steps.image.outputs.name }}"
         VERSION="${{ inputs.image-version }}"
+        
         echo "🔗 Creating multi-arch manifest for ${IMAGE_NAME}:${VERSION}..."
         
-        # Create version-specific tag
+        # Create version-specific multi-arch tag
         docker buildx imagetools create \
           --tag ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION} \
-          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-amd64 \
-          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-arm64
+          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION}-amd64 \
+          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION}-arm64
         
         echo "✅ Created multi-arch image: ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION}"
         
@@ -70,8 +72,8 @@ runs:
           echo "🏷️  Creating latest tag for ${IMAGE_NAME}..."
           docker buildx imagetools create \
             --tag ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:latest \
-            ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-amd64 \
-            ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-arm64
+            ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION}-amd64 \
+            ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION}-arm64
           
           echo "✅ Created latest tag: ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:latest"
         fi

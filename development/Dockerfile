@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.1
-ARG BASE_IMAGE=ghcr.io/servusrene/php-fpm:${PHP_VERSION}
+ARG BASE_IMAGE
 
 FROM ${BASE_IMAGE}
 

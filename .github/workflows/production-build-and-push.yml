@@ -82,22 +82,3 @@ jobs:
           image-variant: ${{ matrix.env }}
           image-version: ${{ inputs.version }}
           is-latest: ${{ inputs.is-latest }}
-
-  # Clean up all temporary tags
-  cleanup:
-    needs: merge-env
-    runs-on: ubuntu-latest
-    if: always()
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: ./.github/actions/cleanup-temp-tags
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ vars.REPOSITORY }}
-          image-version: ${{ inputs.version }}
-          image-variants: base,dev,prod
