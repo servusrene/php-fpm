@@ -1,0 +1,34 @@
+name: Setup PHP Versions Matrix
+description: Generate matrix configuration for PHP versions with latest flag
+
+outputs:
+  matrix:
+    description: 'Matrix configuration with version and is-latest'
+    value: ${{ steps.set-matrix.outputs.matrix }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set matrix
+      id: set-matrix
+      shell: bash
+      run: |
+        # Define PHP versions
+        # This is the ONLY place you need to update when adding new PHP versions
+        # The latest version is automatically determined from the last entry
+        PHP_VERSIONS='["8.1", "8.2", "8.3", "8.4"]'
+        
+        # Automatically get the latest version (last entry in array)
+        LATEST_VERSION=$(echo "$PHP_VERSIONS" | jq -r '.[-1]')
+        
+        # Build matrix configuration (compact JSON for GitHub Actions output)
+        MATRIX=$(echo "$PHP_VERSIONS" | jq -c --arg latest "$LATEST_VERSION" '{
+          version: .,
+          "is-latest": [false],
+          exclude: [{version: $latest, "is-latest": false}],
+          include: [{version: $latest, "is-latest": true}]
+        }')
+        
+        echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+        echo "Latest version: $LATEST_VERSION"
+

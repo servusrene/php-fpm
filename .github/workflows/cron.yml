@@ -6,14 +6,21 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.setup-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php-versions-matrix
+        id: setup-matrix
+
   build:
     name: Check for rebuild
+    needs: setup
     strategy:
-      matrix:
-        version: [ '8.1', '8.2', '8.3', '8.4' ]
-        include:
-          - version: '8.4'
-            is-latest: true
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
     uses: ./.github/workflows/check-for-rebuild.yml
     with:
       version: ${{ matrix.version }}
