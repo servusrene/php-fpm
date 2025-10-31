@@ -14,6 +14,10 @@ jobs:
     strategy:
       matrix:
         version: [ '8.1', '8.2', '8.3', '8.4' ]
+        include:
+          - version: '8.4'
+            is-latest: true
     uses: ./.github/workflows/production-build-and-push.yml
     with:
       version: ${{ matrix.version }}
+      is-latest: ${{ matrix.is-latest }}

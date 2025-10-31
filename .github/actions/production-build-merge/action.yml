@@ -13,6 +13,10 @@ inputs:
   image-version:
     required: true
     description: 'PHP version tag'
+  is-latest:
+    required: false
+    description: 'Whether this is the latest PHP version (creates latest tag)'
+    default: 'false'
 
 runs:
   using: composite
@@ -50,12 +54,25 @@ runs:
       run: |
         # Create multi-arch manifest from temporary architecture-specific images
         IMAGE_NAME="${{ steps.image.outputs.name }}"
-        echo "🔗 Creating multi-arch manifest for ${IMAGE_NAME}:${{ inputs.image-version }}..."
+        VERSION="${{ inputs.image-version }}"
+        echo "🔗 Creating multi-arch manifest for ${IMAGE_NAME}:${VERSION}..."
         
+        # Create version-specific tag
         docker buildx imagetools create \
-          --tag ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${{ inputs.image-version }} \
-          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${{ inputs.image-version }}-amd64 \
-          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${{ inputs.image-version }}-arm64
+          --tag ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION} \
+          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-amd64 \
+          ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-arm64
         
-        echo "✅ Created multi-arch image: ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${{ inputs.image-version }}"
+        echo "✅ Created multi-arch image: ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:${VERSION}"
+        
+        # Create latest tag if this is the latest PHP version
+        if [ "${{ inputs.is-latest }}" == "true" ]; then
+          echo "🏷️  Creating latest tag for ${IMAGE_NAME}..."
+          docker buildx imagetools create \
+            --tag ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:latest \
+            ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-amd64 \
+            ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:temp-${{ github.run_id }}-${VERSION}-arm64
+          
+          echo "✅ Created latest tag: ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}:latest"
+        fi
 

@@ -7,6 +7,11 @@ on:
         description: 'A php version that should be using to build the image'
         required: true
         type: string
+      is-latest:
+        description: 'Whether this is the latest PHP version'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   # Build base image for both architectures in parallel
@@ -76,6 +81,7 @@ jobs:
           repository: ${{ vars.REPOSITORY }}
           image-variant: ${{ matrix.env }}
           image-version: ${{ inputs.version }}
+          is-latest: ${{ inputs.is-latest }}
 
   # Clean up all temporary tags
   cleanup:

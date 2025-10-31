@@ -7,6 +7,11 @@ on:
         description: 'A php version that should be using to build the image'
         required: true
         type: string
+      is-latest:
+        description: 'Whether this is the latest PHP version'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   check:
@@ -35,3 +40,4 @@ jobs:
     uses: ./.github/workflows/production-build-and-push.yml
     with:
       version: ${{ inputs.version }}
+      is-latest: ${{ inputs.is-latest }}
