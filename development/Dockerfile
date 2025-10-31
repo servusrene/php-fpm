@@ -1,6 +1,7 @@
 ARG PHP_VERSION=8.1
+ARG BASE_IMAGE=ghcr.io/servusrene/php-fpm:${PHP_VERSION}
 
-FROM ghcr.io/servusrene/php-fpm:${PHP_VERSION}
+FROM ${BASE_IMAGE}
 
 ENV PHP_OPCACHE_JIT='' \
     APP_ENV=development \
@@ -11,6 +12,7 @@ ENV PHP_OPCACHE_JIT='' \
 RUN apk update \
     && apk add --no-cache \
         nano \
+        linux-headers \
     && rm -rf /var/cache/apk/*
 
 # install xdebug

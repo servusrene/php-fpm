@@ -9,38 +9,89 @@ on:
         type: string
 
 jobs:
+  # Build base image for both architectures in parallel
   build-base:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }}
     permissions:
       contents: read
       packages: write
+    strategy:
+      max-parallel: 2
+      matrix:
+        arch: [amd64, arm64]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: ./.github/actions/production-build
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/production-build-single-arch
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ vars.REPOSITORY }}
-          image-name: ${{ vars.IMAGE_NAME }}
+          image-variant: base
           image-version: ${{ inputs.version }}
-          context: .
+          arch: ${{ matrix.arch }}
 
+  # Build dev and prod images for both architectures in parallel (4 combinations)
   build-env:
+    needs: build-base
+    runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      max-parallel: 4
+      matrix:
+        env: [dev, prod]
+        arch: [amd64, arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/production-build-single-arch
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ vars.REPOSITORY }}
+          image-variant: ${{ matrix.env }}
+          image-version: ${{ inputs.version }}
+          arch: ${{ matrix.arch }}
+
+  # Merge dev and prod multi-arch manifests in parallel
+  merge-env:
+    needs: build-env
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     strategy:
+      max-parallel: 2
       matrix:
-        context: [ { tag: 'dev', path: './development' }, { tag: 'prod', path: './production' } ]
-    needs: build-base
+        env: [dev, prod]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: ./.github/actions/production-build
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/production-build-merge
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ vars.REPOSITORY }}
-          image-name: ${{ vars.IMAGE_NAME }}-${{ matrix.context.tag }}
+          image-variant: ${{ matrix.env }}
           image-version: ${{ inputs.version }}
-          context: ${{ matrix.context.path }}
+
+  # Clean up all temporary tags
+  cleanup:
+    needs: merge-env
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/cleanup-temp-tags
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ vars.REPOSITORY }}
+          image-version: ${{ inputs.version }}
+          image-variants: base,dev,prod

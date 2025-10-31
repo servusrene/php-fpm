@@ -1,0 +1,73 @@
+name: Production Build Single Architecture
+description: Build and push a single architecture image with temporary tag
+inputs:
+  github_token:
+    required: true
+    description: 'Token for GitHub packages'
+  repository:
+    required: true
+    description: 'Repository URL'
+  image-variant:
+    required: true
+    description: 'Image variant (base, dev, or prod)'
+  image-version:
+    required: true
+    description: 'PHP version that should be used to build the image'
+  arch:
+    required: true
+    description: 'Architecture suffix for tagging (e.g., amd64, arm64)'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Determine Build Context
+      id: context
+      shell: bash
+      run: |
+        # Determine context path, image name, and base image based on image variant
+        case "${{ inputs.image-variant }}" in
+          base)
+            echo "path=." >> $GITHUB_OUTPUT
+            echo "image-name=php-fpm" >> $GITHUB_OUTPUT
+            echo "base-image=" >> $GITHUB_OUTPUT
+            ;;
+          dev)
+            echo "path=./development" >> $GITHUB_OUTPUT
+            echo "image-name=php-fpm-dev" >> $GITHUB_OUTPUT
+            echo "base-image=ghcr.io/${{ github.repository_owner }}/php-fpm:temp-${{ github.run_id }}-${{ inputs.image-version }}-${{ inputs.arch }}" >> $GITHUB_OUTPUT
+            ;;
+          prod)
+            echo "path=./production" >> $GITHUB_OUTPUT
+            echo "image-name=php-fpm-prod" >> $GITHUB_OUTPUT
+            echo "base-image=ghcr.io/${{ github.repository_owner }}/php-fpm:temp-${{ github.run_id }}-${{ inputs.image-version }}-${{ inputs.arch }}" >> $GITHUB_OUTPUT
+            ;;
+          *)
+            echo "❌ Invalid image-variant: ${{ inputs.image-variant }}"
+            exit 1
+            ;;
+        esac
+
+    - name: Build and Push
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ steps.context.outputs.path }}
+        push: true
+        provenance: false
+        sbom: false
+        build-args: |
+          PHP_VERSION=${{ inputs.image-version }}
+          BASE_IMAGE=${{ steps.context.outputs.base-image }}
+        tags: ghcr.io/${{ github.repository_owner }}/${{ steps.context.outputs.image-name }}:temp-${{ github.run_id }}-${{ inputs.image-version }}-${{ inputs.arch }}
+        cache-from: type=gha,scope=${{ inputs.image-variant }}-${{ inputs.arch }}-${{ github.ref_name }}-${{ inputs.image-version }}
+        cache-to: type=gha,mode=max,scope=${{ inputs.image-variant }}-${{ inputs.arch }}-${{ github.ref_name }}-${{ inputs.image-version }}
+

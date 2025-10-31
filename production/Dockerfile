@@ -1,6 +1,7 @@
 ARG PHP_VERSION=8.1
+ARG BASE_IMAGE=ghcr.io/servusrene/php-fpm:${PHP_VERSION}
 
-FROM ghcr.io/servusrene/php-fpm:${PHP_VERSION}
+FROM ${BASE_IMAGE}
 
 ENV APP_ENV=production \
     PHP_DISPLAY_ERRORS='Off' \

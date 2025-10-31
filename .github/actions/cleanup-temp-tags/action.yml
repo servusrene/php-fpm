@@ -1,0 +1,95 @@
+name: Cleanup Temporary Tags
+description: Delete temporary architecture-specific image tags
+inputs:
+  github_token:
+    required: true
+    description: 'Token for GitHub packages'
+  repository:
+    required: true
+    description: 'Repository URL'
+  image-version:
+    required: true
+    description: 'PHP version tag'
+  image-variants:
+    required: true
+    description: 'Comma-separated list of image variants to clean up (e.g., base,dev,prod)'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Delete Temporary Tags via GHCR API
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+      run: |
+        # Split image variants by comma
+        IFS=',' read -ra VARIANTS <<< "${{ inputs.image-variants }}"
+        
+        OWNER="${{ github.repository_owner }}"
+        
+        echo "🔍 Cleaning up temporary tags..."
+        
+        # Delete temporary tags for each variant and architecture
+        for variant in "${VARIANTS[@]}"; do
+          # Determine package name based on variant
+          case "${variant}" in
+            base)
+              PACKAGE_NAME="php-fpm"
+              ;;
+            dev)
+              PACKAGE_NAME="php-fpm-dev"
+              ;;
+            prod)
+              PACKAGE_NAME="php-fpm-prod"
+              ;;
+            *)
+              echo "⚠️  Unknown variant: ${variant}"
+              continue
+              ;;
+          esac
+          
+          for arch in amd64 arm64; do
+            TAG_NAME="temp-${{ github.run_id }}-${{ inputs.image-version }}-${arch}"
+            echo "🗑️  Attempting to delete ${PACKAGE_NAME}:${TAG_NAME}"
+            
+            # Get all versions of the package
+            VERSIONS_URL="https://api.github.com/users/${OWNER}/packages/container/${PACKAGE_NAME}/versions"
+            
+            # Find the version ID for this specific tag
+            VERSION_ID=$(curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "${VERSIONS_URL}?per_page=100" | \
+              jq -r ".[] | select(.metadata.container.tags[] | contains(\"${TAG_NAME}\")) | .id" | head -n 1)
+            
+            if [ -n "${VERSION_ID}" ] && [ "${VERSION_ID}" != "null" ]; then
+              # Delete the version
+              DELETE_URL="https://api.github.com/users/${OWNER}/packages/container/${PACKAGE_NAME}/versions/${VERSION_ID}"
+              HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                -X DELETE \
+                -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "${DELETE_URL}")
+              
+              if [ "${HTTP_STATUS}" == "204" ] || [ "${HTTP_STATUS}" == "200" ]; then
+                echo "✅ Deleted ${PACKAGE_NAME}:${TAG_NAME} (version ID: ${VERSION_ID})"
+              else
+                echo "⚠️  Failed to delete ${PACKAGE_NAME}:${TAG_NAME} (HTTP ${HTTP_STATUS})"
+              fi
+            else
+              echo "⚠️  ${PACKAGE_NAME}:${TAG_NAME} not found or already deleted"
+            fi
+          done
+        done
+        
+        echo "✅ Cleanup completed"
+
