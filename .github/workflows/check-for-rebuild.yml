@@ -15,18 +15,18 @@ jobs:
       out-of-date: ${{ steps.check.outputs.out-of-date }}
     steps:
       - name: Login to GHCR
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
-          registry: ${{ vars.REPOSITORY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.github_token }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if update on base image is available
         id: check
         uses: twiddler/is-my-docker-parent-image-out-of-date@v1
         with:
-          parent-image: php:${{ inputs.version }}-fpm
-          my-image: ${{ vars.REPOSITORY }}/${{ vars.IMAGE_NAME }}:${{ inputs.version }}
+          parent-image: php:${{ inputs.version }}-fpm-alpine
+          my-image: ghcr.io/${{ github.repository_owner }}/php-fpm-prod:${{ inputs.version }}
 
   build:
     name: Production Build and Push
