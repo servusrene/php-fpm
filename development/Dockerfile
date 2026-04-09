@@ -17,7 +17,7 @@ RUN apk update \
 
 # install xdebug
 RUN docker-php-source extract \
- && docker-php-ext-get xdebug 3.4.7 \
+ && docker-php-ext-get xdebug 3.5.1 \
  && docker-php-ext-install xdebug \
  && docker-php-source delete \
  # make tmp directory for xdebug results (profiler, ..)

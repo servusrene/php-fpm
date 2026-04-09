@@ -93,7 +93,7 @@ RUN set -eux; \
         pcntl; \
     fi \
   # Install imagick via PECL (all versions)
-  && docker-php-ext-get imagick 3.8.0 \
+  && docker-php-ext-get imagick 3.8.1 \
   && docker-php-ext-install imagick \
   && docker-php-source delete
 
