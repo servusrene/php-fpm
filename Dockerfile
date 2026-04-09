@@ -42,8 +42,6 @@ RUN apk update \
         libzip-dev \
         libxml2-dev \
         oniguruma-dev \
-        imap-dev \
-        krb5-dev \
         curl-dev \
         zlib-dev \
         icu-dev \
@@ -51,6 +49,10 @@ RUN apk update \
         zip \
         unzip \
         git \
+    # PHP < 8.4: imap requires additional dev packages
+    && if version-compare "$PHP_VERSION" lt 8.4; then \
+        apk add --no-cache imap-dev krb5-dev; \
+    fi \
     && rm -rf /var/cache/apk/*
 
 # Configure and install PHP extensions
@@ -64,10 +66,8 @@ RUN set -eux; \
       && docker-php-ext-install imap \
       && docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ --with-webp=/usr/local; \
     else \
-      # PHP 8.4+: pdo, xml, curl are built-in; imap moved to PECL
-      docker-php-ext-get imap 1.0.3 \
-      && docker-php-ext-install imap \
-      && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
+      # PHP 8.4+: pdo, xml, curl are built-in; imap removed (unmaintained PECL)
+      docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
     fi \
   # PHP < 8.5: opcache is a separate extension
   && if version-compare "$PHP_VERSION" lt 8.5; then \
