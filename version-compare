@@ -22,31 +22,31 @@ VERSION1="$1"
 OPERATOR="$2"
 VERSION2="$3"
 
-# Use sort -V for semantic version comparison (BusyBox compatible)
+# Determine order using sort -V
+SORTED_FIRST=$(printf '%s\n%s\n' "$VERSION1" "$VERSION2" | sort -V | head -n1)
+
 case "$OPERATOR" in
     lt)
-        # VERSION1 < VERSION2
-        printf '%s\n%s\n' "$VERSION1" "$VERSION2" | sort -V -c > /dev/null 2>&1 && exit 1 || exit 0
+        # VERSION1 < VERSION2: V1 must sort first AND not be equal
+        [ "$VERSION1" != "$VERSION2" ] && [ "$SORTED_FIRST" = "$VERSION1" ] && exit 0 || exit 1
         ;;
     le)
-        # VERSION1 <= VERSION2
-        printf '%s\n%s\n' "$VERSION2" "$VERSION1" | sort -V -c > /dev/null 2>&1 && exit 0 || exit 1
+        # VERSION1 <= VERSION2: V1 must sort first or be equal
+        [ "$SORTED_FIRST" = "$VERSION1" ] && exit 0 || exit 1
         ;;
     eq)
-        # VERSION1 == VERSION2
         [ "$VERSION1" = "$VERSION2" ] && exit 0 || exit 1
         ;;
     ne)
-        # VERSION1 != VERSION2
         [ "$VERSION1" != "$VERSION2" ] && exit 0 || exit 1
         ;;
     ge)
-        # VERSION1 >= VERSION2
-        printf '%s\n%s\n' "$VERSION2" "$VERSION1" | sort -V -c > /dev/null 2>&1 && exit 0 || exit 1
+        # VERSION1 >= VERSION2: V2 must sort first or be equal
+        [ "$SORTED_FIRST" = "$VERSION2" ] && exit 0 || exit 1
         ;;
     gt)
-        # VERSION1 > VERSION2
-        printf '%s\n%s\n' "$VERSION1" "$VERSION2" | sort -V -c > /dev/null 2>&1 && exit 1 || exit 0
+        # VERSION1 > VERSION2: V2 must sort first AND not be equal
+        [ "$VERSION1" != "$VERSION2" ] && [ "$SORTED_FIRST" = "$VERSION2" ] && exit 0 || exit 1
         ;;
     *)
         echo >&2 "error: unknown operator '$OPERATOR'"
@@ -54,4 +54,3 @@ case "$OPERATOR" in
         exit 1
         ;;
 esac
-
