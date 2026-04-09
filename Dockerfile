@@ -56,42 +56,33 @@ RUN apk update \
 # Configure and install PHP extensions
 RUN set -eux; \
     docker-php-source extract \
-  # Configure and install extensions based on PHP version
-  && if version-compare "$PHP_VERSION" ge 8.4.0; then \
-      # PHP 8.4+: pdo, xml, curl are built-in; imap moved to PECL
-      docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-      && docker-php-ext-install \
-        gd \
-        zip \
-        mbstring \
-        pdo_mysql \
-        mysqli \
-        calendar \
-        intl \
-        opcache \
-        pcntl \
-      # Install imap from PECL
-      && docker-php-ext-get imap 1.0.3 \
-      && docker-php-ext-install imap; \
+  # Version-specific extensions and configuration
+  && if version-compare "$PHP_VERSION" lt 8.4; then \
+      # PHP < 8.4: pdo, xml, curl are separate extensions; imap is bundled
+      docker-php-ext-install pdo xml curl \
+      && PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+      && docker-php-ext-install imap \
+      && docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ --with-webp=/usr/local; \
     else \
-      # PHP < 8.4: traditional extension installation
-      PHP_OPENSSL=yes docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-      && docker-php-ext-configure gd --with-freetype=/usr/local/ --with-jpeg=/usr/local/ --with-webp=/usr/local \
-      && docker-php-ext-install \
-        imap \
-        gd \
-        zip \
-        mbstring \
-        pdo \
-        pdo_mysql \
-        xml \
-        mysqli \
-        curl \
-        calendar \
-        intl \
-        opcache \
-        pcntl; \
+      # PHP 8.4+: pdo, xml, curl are built-in; imap moved to PECL
+      docker-php-ext-get imap 1.0.3 \
+      && docker-php-ext-install imap \
+      && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
     fi \
+  # PHP < 8.5: opcache is a separate extension
+  && if version-compare "$PHP_VERSION" lt 8.5; then \
+      docker-php-ext-install opcache; \
+    fi \
+  # Common extensions (all versions)
+  && docker-php-ext-install \
+      gd \
+      zip \
+      mbstring \
+      pdo_mysql \
+      mysqli \
+      calendar \
+      intl \
+      pcntl \
   # Install imagick via PECL (all versions)
   && docker-php-ext-get imagick 3.8.1 \
   && docker-php-ext-install imagick \
